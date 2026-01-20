@@ -27,7 +27,7 @@ const Login = () => {
             onClick={() => {
               signIn("google");
             }}
-            className="flex gap-4 items-center justify-center border border-slate-300 py-2 px-12 bg-slate-200 rounded-2xl"
+            className="flex gap-4 items-center justify-center border border-slate-300 py-2 px-12 bg-slate-200 rounded-2xl cursor-pointer hover:bg-slate-300"
           >
             <img src="/google.png" className="w-8" alt="" />
             <span>Continue to Google</span>
@@ -37,7 +37,7 @@ const Login = () => {
             onClick={() => {
               signIn("github");
             }}
-            className="flex gap-4 items-center justify-center border border-slate-300 py-2 px-12 bg-slate-200 rounded-2xl"
+            className="flex gap-4 items-center justify-center border border-slate-300 py-2 px-12 bg-slate-200 rounded-2xl cursor-pointer hover:bg-slate-300 q "
           >
             <img src="/github.png" className="w-8" alt="" />
             <span>Continue to GitHub</span>
