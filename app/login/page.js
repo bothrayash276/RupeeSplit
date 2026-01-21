@@ -2,21 +2,20 @@
 import React from "react";
 import { useSession, signIn, signOut } from "next-auth/react";
 import Link from "next/link";
+import { redirect, RedirectType } from "next/navigation"
 
 const Login = () => {
   const {data:session} = useSession()
 
   if(session) {
     return (
-      <>
-      <Link href={"/"}/>
-      </>
+      redirect("/", RedirectType.replace)
     )
   }
 
   return (
     <>
-      <div className="h-screen w-screen flex flex-col justify-evenly items-center">
+      <div className="h-full w-full flex flex-col justify-evenly items-center">
         <div className="flex flex-col gap-4 items-center justify-center">
           <img src="/logo.png" className="w-15" alt="" />
           <span className="font-bold text-3xl">RupeeSplit</span>
