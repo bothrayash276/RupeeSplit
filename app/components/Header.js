@@ -3,9 +3,10 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { signOut, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { useParams } from "next/navigation";
+import { useParams, usePathname } from "next/navigation";
 
 const Header = () => {
+  const path = usePathname();
   const { data: session } = useSession();
   const router = useRouter();
   const [dropdown, setDropdown] = useState(false);
@@ -24,16 +25,8 @@ const Header = () => {
       <div className="lg:hidden h-15 border border-b border-slate-200 flex items-center justify-between px-4">
         {/* Logo and Website Name */}
         <Link href={"/"} className="flex items-center gap-1 cursor-pointer">
-          <img src="/logo.png" alt="" className="w-8" />
+          <img src="/logo.png" alt="" className="w-10" />
           <span className="font-bold">RupeeSplit</span>
-        </Link>
-        {/* Dashboard Button */}
-        <Link
-          href={"/dashboard"}
-          className={`${session ? "" : "hidden"} bg-[#299C89] text-white px-3 py-2 rounded-full flex gap-2`}
-        >
-          <img src="/dashboard.gif" className="w-6 h-6" alt="" />
-          Dashboard
         </Link>
         {/* Avatar */}
         <div className="relative">
@@ -46,7 +39,7 @@ const Header = () => {
           >
             <img
               onClick={handleAvatar}
-              className="w-8 cursor-pointer"
+              className="w-10 cursor-pointer"
               src="/avatar.gif"
               alt=""
             />
@@ -86,24 +79,81 @@ const Header = () => {
       </div>
 
       {/* Header Container - Laptop UI */}
-      <div className="not-lg:hidden h-15 border border-b border-slate-200 flex items-center justify-between gap-10 px-4">
+      <div className="not-lg:hidden h-18 border border-b border-slate-200 flex items-center justify-between gap-10 px-4">
         {/* Logo and Website Name */}
         <Link
           href={"/"}
-          className="flex items-center gap-1   flex-1 cursor-pointer"
+          className="flex items-center gap-1 mr-10 cursor-pointer"
         >
-          <img src="/logo.png" alt="" className="w-8" />
+          <img src="/logo.png" alt="" className="w-10" />
           <span className="font-bold">RupeeSplit</span>
         </Link>
-        {/* Dashboard Button */}
-        <Link
-          href={"/dashboard"}
-          className={`${session ? "" : "hidden"} bg-[#299C89] text-white px-3 py-2 rounded-full flex gap-2`}
-        >
-          <img src="/dashboard.gif" className="w-6 h-6" alt="" />
-          Dashboard
-        </Link>
-         {/* Avatar */}
+        {/* Navigating Elements */}
+        <div className={` ${session ? "" : "hidden"} flex-1 flex gap-10 justify-start`}>
+          {/* Dashboard */}
+          <Link
+            href={"/"}
+            className={`${path == "/" ? "text-[#279B88] font-bold bg-[#D4EBE7]" : "text-[#67837F]"} flex gap-2 items-center justify-center py-2 px-4 rounded-full`}
+          >
+            <img
+              src={
+                path == "/"
+                  ? "/dashboard_active.svg"
+                  : "/dashboard_inactive.svg"
+              }
+              alt=""
+              className="w-5 h-5"
+            />
+            Dashboard
+          </Link>
+          {/* Groups */}
+          <Link
+            href={"/"}
+            className={`${path == "/" ? "text-[#279B88] font-bold bg-[#D4EBE7]" : "text-[#67837F]"} flex gap-2 items-center justify-center py-2 px-4 rounded-full`}
+          >
+            <img
+              src={
+                path == "/"
+                  ? "/group_active.svg"
+                  : "/group_inactive.svg"
+              }
+              alt=""
+              className="w-5 h-5"
+            />
+            Group
+          </Link>
+          <Link
+            href={"/"}
+            className={`${path == "/" ? "text-[#279B88] font-bold bg-[#D4EBE7]" : "text-[#67837F]"} flex gap-2 items-center justify-center py-2 px-4 rounded-full`}
+          >
+            <img
+              src={
+                path == "/"
+                  ? "/addFriend_active.svg"
+                  : "/addFriend_inactive.svg"
+              }
+              alt=""
+              className="w-5 h-5"
+            />
+            Friends
+          </Link>
+          <Link
+            href={"/"}
+            className={`${path == "/" ? "text-[#279B88] font-bold bg-[#D4EBE7]" : "text-[#67837F]"} flex gap-2 items-center justify-center py-2 px-4 rounded-full`}
+          >
+            <img
+              src={
+                path == "/"
+                  ? "/settings_active.gif"
+                  : "/settings_inactive.gif"
+              }
+              alt=""
+              className="w-5 h-5"
+            />
+            Settings
+          </Link>
+        </div>
+        {/* Avatar */}
         <div className="relative">
           <button
             onBlur={() => {
@@ -114,7 +164,7 @@ const Header = () => {
           >
             <img
               onClick={handleAvatar}
-              className="w-8 cursor-pointer"
+              className="w-10 cursor-pointer"
               src="/avatar.gif"
               alt=""
             />
