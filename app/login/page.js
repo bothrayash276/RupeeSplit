@@ -3,14 +3,13 @@ import React from "react";
 import { useSession, signIn, signOut } from "next-auth/react";
 import Link from "next/link";
 import { redirect, RedirectType } from "next/navigation"
+import { isRegister } from "./register";
 
 const Login = () => {
   const {data:session} = useSession()
 
   if(session) {
-    return (
-      redirect("/", RedirectType.replace)
-    )
+   redirect('/register', RedirectType.replace)
   }
 
   return (

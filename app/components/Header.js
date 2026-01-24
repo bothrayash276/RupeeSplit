@@ -7,7 +7,7 @@ import { useParams, usePathname } from "next/navigation";
 
 const Header = () => {
   const path = usePathname();
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
   const router = useRouter();
   const [dropdown, setDropdown] = useState(false);
 
@@ -18,7 +18,6 @@ const Header = () => {
       router.push("/login");
     }
   };
-
   return (
     <>
       {/* Header Container - Mobile UI */}
@@ -53,14 +52,77 @@ const Header = () => {
               className="p-2 text-sm text-body font-medium"
               aria-labelledby="dropdownDefaultButton"
             >
-              {/* Profile Button */}
+                {/* Dashboard */}
               <li>
-                <Link
-                  href={"#"}
-                  className="inline-flex items-center w-full p-2 hover:bg-neutral-tertiary-medium hover:text-heading rounded"
-                >
-                  Profile
-                </Link>
+          <Link
+            href={"/dashboard"}
+            className={`${path == "/dashboard" ? "text-[#279B88] font-bold bg-[#D4EBE7]" : "text-[#67837F]"} flex gap-2 items-center justify-center py-2 px-4 rounded-full`}
+          >
+            <img
+              src={
+                path == "/dashboard"
+                  ? "/dashboard_active.svg"
+                  : "/dashboard_inactive.svg"
+              }
+              alt=""
+              className="w-5 h-5"
+            />
+            Dashboard
+          </Link>
+              </li>
+                {/* Groups */}
+              <li>
+          <Link
+            href={"/groups"}
+            className={`${path == "/groups" ? "text-[#279B88] font-bold bg-[#D4EBE7]" : "text-[#67837F]"} flex gap-2 items-center justify-center py-2 px-4 rounded-full`}
+          >
+            <img
+              src={
+                path == "/groups"
+                  ? "/group_active.svg"
+                  : "/group_inactive.svg"
+              }
+              alt=""
+              className="w-5 h-5"
+            />
+            Groups
+          </Link>
+              </li>
+                {/* Friends */}
+              <li>
+          <Link
+            href={"/friends"}
+            className={`${path == "/friends" ? "text-[#279B88] font-bold bg-[#D4EBE7]" : "text-[#67837F]"} flex gap-2 items-center justify-center py-2 px-4 rounded-full`}
+          >
+            <img
+              src={
+                path == "/friends"
+                  ? "/addFriend_active.svg"
+                  : "/addFriend_inactive.svg"
+              }
+              alt=""
+              className="w-5 h-5"
+            />
+            Friends
+          </Link>
+              </li>
+                {/* Settings */}
+              <li>
+          <Link
+            href={"/settings"}
+            className={`${path == "/settings" ? "text-[#279B88] font-bold bg-[#D4EBE7]" : "text-[#67837F]"} flex gap-2 items-center justify-center py-2 px-4 rounded-full`}
+          >
+            <img
+              src={
+                path == "/settings"
+                  ? "/settings_active.gif"
+                  : "/settings_inactive.gif"
+              }
+              alt=""
+              className="w-5 h-5"
+            />
+            Settings
+          </Link>
               </li>
               {/* SignOut Button */}
               <li>
@@ -92,12 +154,12 @@ const Header = () => {
         <div className={` ${session ? "" : "hidden"} flex-1 flex gap-10 justify-start`}>
           {/* Dashboard */}
           <Link
-            href={"/"}
-            className={`${path == "/" ? "text-[#279B88] font-bold bg-[#D4EBE7]" : "text-[#67837F]"} flex gap-2 items-center justify-center py-2 px-4 rounded-full`}
+            href={"/dashboard"}
+            className={`${path == "/dashboard" ? "text-[#279B88] font-bold bg-[#D4EBE7]" : "text-[#67837F]"} flex gap-2 items-center justify-center py-2 px-4 rounded-full`}
           >
             <img
               src={
-                path == "/"
+                path == "/dashboard"
                   ? "/dashboard_active.svg"
                   : "/dashboard_inactive.svg"
               }
@@ -108,27 +170,28 @@ const Header = () => {
           </Link>
           {/* Groups */}
           <Link
-            href={"/"}
-            className={`${path == "/" ? "text-[#279B88] font-bold bg-[#D4EBE7]" : "text-[#67837F]"} flex gap-2 items-center justify-center py-2 px-4 rounded-full`}
+            href={"/groups"}
+            className={`${path == "/groups" ? "text-[#279B88] font-bold bg-[#D4EBE7]" : "text-[#67837F]"} flex gap-2 items-center justify-center py-2 px-4 rounded-full`}
           >
             <img
               src={
-                path == "/"
+                path == "/groups"
                   ? "/group_active.svg"
                   : "/group_inactive.svg"
               }
               alt=""
               className="w-5 h-5"
             />
-            Group
+            Groups
           </Link>
+          {/* Friends */}
           <Link
-            href={"/"}
-            className={`${path == "/" ? "text-[#279B88] font-bold bg-[#D4EBE7]" : "text-[#67837F]"} flex gap-2 items-center justify-center py-2 px-4 rounded-full`}
+            href={"/friends"}
+            className={`${path == "/friends" ? "text-[#279B88] font-bold bg-[#D4EBE7]" : "text-[#67837F]"} flex gap-2 items-center justify-center py-2 px-4 rounded-full`}
           >
             <img
               src={
-                path == "/"
+                path == "/friends"
                   ? "/addFriend_active.svg"
                   : "/addFriend_inactive.svg"
               }
@@ -137,13 +200,14 @@ const Header = () => {
             />
             Friends
           </Link>
+          {/* Settings */}
           <Link
-            href={"/"}
-            className={`${path == "/" ? "text-[#279B88] font-bold bg-[#D4EBE7]" : "text-[#67837F]"} flex gap-2 items-center justify-center py-2 px-4 rounded-full`}
+            href={"/settings"}
+            className={`${path == "/settings" ? "text-[#279B88] font-bold bg-[#D4EBE7]" : "text-[#67837F]"} flex gap-2 items-center justify-center py-2 px-4 rounded-full`}
           >
             <img
               src={
-                path == "/"
+                path == "/settings"
                   ? "/settings_active.gif"
                   : "/settings_inactive.gif"
               }
@@ -178,15 +242,6 @@ const Header = () => {
               className="p-2 text-sm text-body font-medium"
               aria-labelledby="dropdownDefaultButton"
             >
-              {/* Profile Button */}
-              <li>
-                <Link
-                  href={"#"}
-                  className="inline-flex items-center w-full p-2 hover:bg-neutral-tertiary-medium hover:text-heading rounded"
-                >
-                  Profile
-                </Link>
-              </li>
               {/* SignOut Button */}
               <li>
                 <button
