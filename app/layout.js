@@ -18,7 +18,7 @@ const MainFont = Plus_Jakarta_Sans({
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body className={`${MainFont.className} bg-[#F6F8F7]`}>
+      <body className={`${MainFont.className} bg-[#F5F7F8]`}>
         <SessionWrapper>
           <Header />
           {children}
