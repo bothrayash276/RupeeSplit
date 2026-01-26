@@ -50,8 +50,21 @@ const Dashboard = () => {
           </span>
           <span className="text-xl font-bold mt-10">{scoreReview()}</span>
         </div>
-        {/* Owed and Lend */}
+        {/* Owed and Lend Container */}
+        <div className="flex gap-3 w-full px-5">
+          <div className="bg-white rounded-lg flex flex-col flex-1 p-2 px-6">
+              <img src="/increase.gif" alt="" className="w-5" />
+              <span className="text-gray-500 text-sm font-bold mt-1">YOU ARE OWED</span>
+              <span className="text-green-500 font-bold text-2xl mt-4">&#8377; {user.lend}</span>
+          </div>
+          <div className="bg-white rounded-lg flex flex-col flex-1 p-2 px-6">
+              <img src="/decrease.gif" alt="" className="w-5" />
+              <span className="text-gray-500 text-sm font-bold mt-1">YOU OWE</span>
+              <span className="text-red-500 font-bold text-2xl mt-4">&#8377; {user.owe}</span>
+          </div>
+        </div>
       </div>
+
     </>
   );
 };
