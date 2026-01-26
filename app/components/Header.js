@@ -246,6 +246,7 @@ const Header = () => {
               <li>
                 <button
                   onClick={() => {
+                    localStorage.clear();
                     signOut();
                   }}
                   className="inline-flex items-center w-full p-2 hover:bg-neutral-tertiary-medium hover:text-heading rounded"
