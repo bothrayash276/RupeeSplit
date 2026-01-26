@@ -20,7 +20,6 @@ const Register = () => {
       "score": 500,
       "doesExist": true,
     };
-    localStorage.setItem('userData', JSON.stringify(userEntry))
     fetch("http://localhost:8080/register", {
       'method': 'POST',
       'body': JSON.stringify(userEntry),
@@ -28,6 +27,8 @@ const Register = () => {
         "Content-Type": "application/json",
       },
     })
+    .then(res => res.json())
+    .then(res => localStorage.setItem('userData', JSON.stringify(res)))
     .then( redirect('/dashboard', RedirectType.replace));
   }
   return (

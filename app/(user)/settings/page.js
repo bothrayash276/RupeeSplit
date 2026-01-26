@@ -9,10 +9,28 @@ const Settings = () => {
     setUser(data);
   }, []);
 
-  const handleSave = async () => {
+  const handleSaveMobile = async () => {
     const name = document.getElementById(
-      "fullNameBox-Mobile" || "fullNameBox-Laptop",
-    ).value;
+      "fullNameBox-Mobile").value;
+    const newData = {
+      ...user,
+      fullName: name,
+    };
+    setUser(newData);
+    localStorage.setItem("userData", JSON.stringify(newData));
+    console.log(newData);
+    await fetch("http://localhost:8080/update", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(newData),
+    });
+    alert("Changes saved Successfully");
+  };
+  const handleSaveLaptop = async () => {
+    const name = document.getElementById(
+      "fullNameBox-Laptop").value;
     const newData = {
       ...user,
       fullName: name,
@@ -43,7 +61,7 @@ const Settings = () => {
               Customize your profile, manage groups and friends
             </span>
             <span
-              onClick={handleSave}
+              onClick={handleSaveLaptop}
               className="text-white bg-[#2A9D89] px-5 py-3 rounded-full cursor-pointer hover:bg-[#258b7a]"
             >
               Save Changes
@@ -126,7 +144,7 @@ const Settings = () => {
           <span className="text-gray-500 text-sm mb-7 font-bold">UID: {user.uid}</span>
           {/* Save Changes Button */}
           <span
-            onClick={handleSave}
+            onClick={handleSaveMobile}
             className="text-white bg-[#2A9D89] px-5 py-2 rounded-full cursor-pointer hover:bg-[#258b7a]"
           >
             Save Changes
