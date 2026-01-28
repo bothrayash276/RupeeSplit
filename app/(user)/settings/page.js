@@ -1,24 +1,57 @@
 "use client";
+import serverData_User from "@/app/_data";
+import { useSession } from "next-auth/react";
 import React from "react";
 import { useState, useEffect } from "react";
 
 const Settings = () => {
+  // Checks if page is loaded or not
+  const [loading, setLoading] = useState(true);
+  
+  // Stores user info
   const [user, setUser] = useState();
-  useEffect(() => {
-    const data = JSON.parse(localStorage.getItem("userData"));
-    setUser(data);
-  }, []);
 
+  // Loads user session
+  const { data: session, status } = useSession();
+
+  // Gets user data from Backend
+  useEffect(() => {
+    // Defines Function
+    const load = async () => {
+      // First ensures, user is authenticated
+      if (status === "authenticated") {
+        // Try to get data from backend
+        try {
+          const data = await serverData_User(session.user.email);
+          // Stores data from backend into user variable
+          setUser(data);
+        } 
+        finally {
+          // After data is loaded from backend, then turn off loading screen
+          setLoading(false);
+        }
+      }
+    };
+
+    // Calls the function
+    load();
+  }, [status]);
+
+  // Sends the edited user information to backend (for mobile)
   const handleSaveMobile = async () => {
-    const name = document.getElementById(
-      "fullNameBox-Mobile").value;
+    // Gets the entered name from input box
+    const name = document.getElementById("fullNameBox-Mobile").value;
+
+    // Stores the edited data into new object
     const newData = {
       ...user,
       fullName: name,
     };
+
+    // Updates the user data locally on webpage
     setUser(newData);
-    localStorage.setItem("userData", JSON.stringify(newData));
-    console.log(newData);
+
+    // Sends the object with new data to backend via POST
     await fetch("http://localhost:8080/update", {
       method: "POST",
       headers: {
@@ -26,18 +59,26 @@ const Settings = () => {
       },
       body: JSON.stringify(newData),
     });
+
+    // Alerts that changes are saved
     alert("Changes saved Successfully");
   };
+
+  // Sends the edited user information to backend (for laptop) 
   const handleSaveLaptop = async () => {
-    const name = document.getElementById(
-      "fullNameBox-Laptop").value;
+    // Gets the entered name from input box
+    const name = document.getElementById("fullNameBox-Laptop").value;
+
+    // Stores the edited data into new object
     const newData = {
       ...user,
       fullName: name,
     };
+
+    // Updates the user data locally on webpage
     setUser(newData);
-    localStorage.setItem("userData", JSON.stringify(newData));
-    console.log(newData);
+
+    // Sends the object with new data to backend via POST
     await fetch("http://localhost:8080/update", {
       method: "POST",
       headers: {
@@ -45,9 +86,13 @@ const Settings = () => {
       },
       body: JSON.stringify(newData),
     });
+
+    // Alerts that changes are saved
     alert("Changes saved Successfully");
   };
-  if (!user) {
+
+  // Returns a loading page
+  if (loading) {
     return <>Please Wait</>;
   }
   return (
@@ -84,7 +129,9 @@ const Settings = () => {
               {/* Container storing Name, UID and Score */}
               <div className="flex flex-col flex-1 ">
                 <span className="font-bold text-xl">{user.fullName}</span>
-                <span className="font-bold text-gray-500 text-sm mb-2">UID: {user.uid}</span>
+                <span className="font-bold text-gray-500 text-sm mb-2">
+                  UID: {user.uid}
+                </span>
                 <span className="font-bold text-[#2A9D89] bg-[#D4EBE7] w-15 text-center rounded-full text-sm">
                   {user.score}
                 </span>
@@ -126,7 +173,7 @@ const Settings = () => {
           <span className="font-bold text-[#2A9D89] bg-[#D4EBE7] w-15 text-center rounded-full text-sm mt-3">
             {user.score}
           </span>
-          
+
           {/* Full Name */}
           <div className="flex items-center mt-5">
             <input
@@ -140,8 +187,10 @@ const Settings = () => {
           {/* Email */}
           <span className="text-gray-500 text-sm">{user.email}</span>
           {/* UID */}
-          
-          <span className="text-gray-500 text-sm mb-7 font-bold">UID: {user.uid}</span>
+
+          <span className="text-gray-500 text-sm mb-7 font-bold">
+            UID: {user.uid}
+          </span>
           {/* Save Changes Button */}
           <span
             onClick={handleSaveMobile}

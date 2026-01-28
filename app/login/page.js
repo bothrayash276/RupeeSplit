@@ -1,24 +1,18 @@
 "use client";
 import React from "react";
-import { useSession, signIn, signOut } from "next-auth/react";
+import { useSession, signIn } from "next-auth/react";
 import { redirect, RedirectType } from "next/navigation"
 
-const getData = async (email) => {
-  const res = await fetch(`http://localhost:8080/find/${email}`)
-  const file = await res.json()
-  localStorage.setItem('userData', JSON.stringify(file))
-  console.log(file)
-}
 
 const Login = () => {
+  // Loads user session
   const {data:session, status} = useSession()
 
-  if(session) {
-    if(status == 'authenticated'){
-      getData(session.user.email)
-      redirect('/register', RedirectType.replace)
-    }
+  // As user log's in, redirect him to register page.
+  if(status === 'authenticated'){
+    redirect('/register', RedirectType.replace)
   }
+
 
   return (
     <>

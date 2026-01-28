@@ -3,21 +3,31 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { signOut, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { useParams, usePathname } from "next/navigation";
+import { usePathname } from "next/navigation";
 
 const Header = () => {
   const path = usePathname();
-  const { data: session, status } = useSession();
+  // Loads user session
+  const { data: session } = useSession();
+
+  // Initializing Router
   const router = useRouter();
+
+  // DropDown useState
   const [dropdown, setDropdown] = useState(false);
 
+  // Function if user clicks on avatar icon
   const handleAvatar = () => {
     if (session) {
+      // If user is logged in, show him the navigation menu
       setDropdown(true);
-    } else {
+    } 
+    else {
+      // If user is not logged in, redirect him to the login page
       router.push("/login");
     }
   };
+  
   return (
     <>
       {/* Header Container - Mobile UI */}

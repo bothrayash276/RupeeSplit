@@ -1,14 +1,19 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { useSession } from "next-auth/react";
 import {redirect, RedirectType} from "next/navigation"
 import ShortUniqueId from "short-unique-id";
 
 const Register = () => {
+  // Loads User Session
   const { data: session, status } = useSession();
+
+  // Generates User Unique Id (UID)
   const uid = new ShortUniqueId({length: 5})
 
+
   if (status == "authenticated") {
+    // Template of New User
     const userEntry = {
       "fullName" : session.user.name,
       "email" : session.user.email,
@@ -20,6 +25,8 @@ const Register = () => {
       "score": 500,
       "doesExist": true,
     };
+
+    // Connecting to Backend to send new user's data via POST
     fetch("http://localhost:8080/register", {
       'method': 'POST',
       'body': JSON.stringify(userEntry),
@@ -28,14 +35,11 @@ const Register = () => {
       },
     })
     .then(res => res.json())
-    .then(res => localStorage.setItem('userData', JSON.stringify(res)))
-    .then( redirect('/dashboard', RedirectType.replace));
+    
+    // Redirects to Dashboard of User
+    .then( redirect('/dashboard', RedirectType.replace) );
   }
-  return (
-    <>
-
-    </>
-  );
+  return <></>
 };
 
 export default Register;

@@ -1,15 +1,32 @@
 "use client";
+import serverData_User from "@/app/_data";
+import { useSession } from "next-auth/react";
 import React, { useEffect, useState } from "react";
-import setArray from "./_setArray";
 
 const Friends = () => {
-  const [invalidUID, setInvalidUID] = useState(false);
-  const [fetched, setFetched] = useState(false);
+  // Checks if page is loaded or not
+  const [loading, setLoading] = useState(true)
+
+  // Loads user session
+  const {data:session, status} = useSession()
+
+  // Stores user info
+  const [myinfo, setMyinfo] = useState()
+  // Stores friends info
   const [friendInfo, setFriendInfo] = useState({ doesExist: true });
 
+  // Checks if entered UID is valid or not
+  const [invalidUID, setInvalidUID] = useState(false);
+
+  // Checks if data is fetched or not
+  const [fetched, setFetched] = useState(false);
+
+  // Function when search button is clicked
   const findFriend = () => {
+    // Gets UID of friend from input box
     let userUID = document.getElementById("uidSearchBox").value;
     if (!userUID) userUID = document.getElementById("uidSearchBoxMobile").value;
+
     fetch(`http://localhost:8080/findFriend/${userUID}`)
       .then((res) => res.json())
       .then((res) => setFriendInfo(res));
@@ -28,26 +45,40 @@ const Friends = () => {
         setInvalidUID(false);
       }, 2000);
     } else if (
-      document.getElementById("uidSearchBox").value ||
-      document.getElementById("uidSearchBoxMobile").value
+      document.getElementById("uidSearchBox")?.value ||
+      document.getElementById("uidSearchBoxMobile")?.value
     ) {
       setFetched(true);
     }
   }, [friendInfo]);
 
+  useEffect(() => {
+    const load = async () => {
+      if(status==='authenticated'){
+        try {
+          const data = await serverData_User(session.user.email)
+          setMyinfo(data)
+        }
+        finally {
+          setLoading(false)
+        }
+      }
+    }
+    load()
+  }, [status])
+
+
   const addFriend = async () => {
     alert('Friend Added Successfully!')
-    const myinfo = JSON.parse(localStorage.getItem("userData"));
     const myUserFriends = [...myinfo.friends, friendInfo.uid];
     const myFriendFriends = [...friendInfo.friends, myinfo.uid];
     const myUser = {
       ...myinfo,
-      friends: setArray(myUserFriends),
+      friends: myUserFriends,
     };
-    localStorage.setItem("userData", JSON.stringify(myUser));
     const friendUser = {
       ...friendInfo,
-      friends: setArray(myFriendFriends),
+      friends: myFriendFriends,
     };
     await fetch("http://localhost:8080/addFriend", {
       method: "POST",
@@ -61,6 +92,10 @@ const Friends = () => {
   const handleEnter = (e) => {
     if (e.key == "Enter") findFriend();
   };
+
+  if(loading){
+    return <>Please Wait</>
+  }
 
   return (
     <>
