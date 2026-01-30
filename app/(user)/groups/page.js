@@ -1,5 +1,5 @@
 "use client"
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { v4 as uuidv4 } from 'uuid'
 import {importGrpData, newGroup, updateUser} from './_groupFxn'
 import serverData_User from '@/app/_data'
@@ -34,18 +34,19 @@ const Groups = () => {
           setUser(data)
           
           // Getting Groups Data
-          const grp = []
-          data.groups.map( (groupId)=> {
-            const url = `http://localhost:8080/findgrp/${groupId}`
-            fetch(url)
-            .then (res => res.json())
-            .then(res => grp.push(res))
-            .finally(() => {setGroup(grp)})
-          })
+          const data2 = await Promise.all(
+            data.groups.map( (id) => {
+              const url = `http://localhost:8080/findgrp/${id}`
+              const res = fetch(url).then( res => res.json())
+              return res
+            })
+          )
+          setGroup(data2)
 
         }
         finally {
-          setLoading(false)
+          if(group)
+            setLoading(false)
         }
       }
     }
@@ -153,7 +154,7 @@ const Groups = () => {
     <>
     {/* Laptop UI */}
     <div 
-    className={`not-md:hidden h-full w-full my-10 ${groupPopup ? "blur" : ""}`}>
+    className={`not-md:hidden h-full w-full my-10`}>
 
       {/* Container for Heading, Description and Create Group Button */}
       <div 
