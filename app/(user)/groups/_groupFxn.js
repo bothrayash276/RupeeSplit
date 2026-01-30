@@ -20,3 +20,4 @@ export async function updateUser(user) {
           body: JSON.stringify(user)
         })
 }
+

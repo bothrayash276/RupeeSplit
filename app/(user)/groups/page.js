@@ -1,9 +1,10 @@
 "use client"
 import React, { useEffect, useState } from 'react'
 import { v4 as uuidv4 } from 'uuid'
-import {newGroup, updateUser} from './_groupFxn'
+import {importGrpData, newGroup, updateUser} from './_groupFxn'
 import serverData_User from '@/app/_data'
 import { useSession } from 'next-auth/react'
+import Link from 'next/link'
 
 const Groups = () => {
   // Checks Loading
@@ -11,6 +12,9 @@ const Groups = () => {
 
   // Save userData
   const [user, setUser] = useState()
+
+  // Save groups in which user is in
+  const [group, setGroup] = useState([])
 
   // State for popup of creating a new group
   const [groupPopup, setGroupPopup] = useState(false)
@@ -21,13 +25,24 @@ const Groups = () => {
   // Loading Session
   const {data:session, status} = useSession()
 
-  // Loading Userdata
+  // Loading Userdata and groups
   useEffect( () => {
     const load = async () => {
       if( status === 'authenticated' ) {
         try {
           const data = await serverData_User(session.user.email)
           setUser(data)
+          
+          // Getting Groups Data
+          const grp = []
+          data.groups.map( (groupId)=> {
+            const url = `http://localhost:8080/findgrp/${groupId}`
+            fetch(url)
+            .then (res => res.json())
+            .then(res => grp.push(res))
+            .finally(() => {setGroup(grp)})
+          })
+
         }
         finally {
           setLoading(false)
@@ -35,7 +50,7 @@ const Groups = () => {
       }
     }
     load()
-  }, [status])
+  }, [status, groupPopup])
 
   // Function creates a group when button is pressed
   const createGroup = () => {
@@ -170,6 +185,80 @@ const Groups = () => {
 
       </div>
 
+      {/* Group Cards Container */}
+      <div className="flex items-center justify-evenly gap-3 w-full h-full">
+        {
+          group.map ((mygrp) => {
+            return (             
+              <Link
+              href={`/groups/${mygrp.id}`}
+              target='_blank'
+              key={`${mygrp.id} main container`}
+              className='bg-white flex flex-col p-5 h-130 w-80 shadow rounded-2xl'>
+
+                {/* Group Icon Container */}
+                <div
+                key={`${mygrp.id} group icon container`}
+                className='bg-[#D4EBE7] w-full h-70 flex item-center justify-center rounded-2xl mb-5'>
+                  {/* Group Icon */}
+                  <img 
+                  key={`${mygrp.id} group icon`}
+                  src="/mygroup.svg" 
+                  className='w-15' />
+                </div>                
+
+                {/* Group Name */}
+                <span
+                key={`${mygrp.id} group name`}
+                className='text-xl font-bold mb-2'>
+                  {mygrp.groupName}
+                </span>
+
+                {/* Members Container */}
+                <div
+                key={`${mygrp.id} members container`}
+                className='flex'>
+                {/* Members Icon */}
+                  <img
+                  key={`${mygrp.id} members icon `} 
+                  src="/members.svg" 
+                  className='w-5' />
+
+                  {/* Members */}
+                  <span 
+                  key={`${mygrp.id} group members`}
+                  className='text-[#68827E] px-2'>
+                    {mygrp.members.length} members
+                  </span>
+                </div>
+
+                
+
+                {/* Divider */}
+                <div 
+                key={`${mygrp.id} divider`}
+                className='border border-[#eaeaea] mt-6 mb-4'></div>
+
+                {/* Balance Text */}
+                <span
+                key={`${mygrp.id} text saying balance`}
+                className='text-[#68827E] text-sm font-bold'>
+                  YOUR BALANCE
+                </span>
+
+                {/* Showcasing Balance */}
+                <span
+                key={`${mygrp.id} your balance`}
+                className='text-red-500 font-bold text-xl mt-2'>
+                  You owe $500
+                </span>
+
+              </Link>
+            )
+            
+          })
+        }
+      </div>
       
     </div>
       
