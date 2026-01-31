@@ -55,3 +55,14 @@ export async function updateGroup(data) {
     })
 }
 
+export function due (username, dues) {
+    const data = dues[username];
+    const portfolio = Object.values(data)
+    let money = 0;
+    for(let i = 0; i < portfolio.length; i++){
+        money += Number(portfolio[i])
+    }
+    console.log(Object.values(portfolio))
+    return money
+}
+

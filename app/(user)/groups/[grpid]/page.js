@@ -1,7 +1,7 @@
 "use client"
-import { useParams } from 'next/navigation'
+import { redirect, RedirectType, useParams } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
-import { transactionObj, updateGroup } from '../_groupFxn'
+import { due, transactionObj, updateGroup } from '../_groupFxn'
 
 const GrpSetting = () => {
 
@@ -35,6 +35,8 @@ const GrpSetting = () => {
     // Getting Group Id
     const params = useParams()
     const groupID = params.grpid
+
+    
 
     // Loads Group Data and Members
     useEffect( () => {
@@ -109,12 +111,26 @@ const GrpSetting = () => {
                 'dues' : transac
             }
             await updateGroup(newGrp)
+            setGroup(newGrp)
         }
 
         setExpensePopUp(false)
         setLoading(true)
 
     } 
+
+    // Function to Exist Group
+    const handleExit = async (userId, groupId) => {
+        const url = 'http://localhost:8080/deleteUserFromGroup'
+        await fetch(url, {
+            method : 'POST',
+            headers : {
+                'Content-Type' : 'application/json'
+            },
+            body : JSON.stringify([userId,groupId])
+        })
+        redirect('/groups', RedirectType.replace)
+    }
 
     // Loading Page
     if(loading){
@@ -445,7 +461,7 @@ const GrpSetting = () => {
 
         {/* Navbar */}
         <div
-        className='w-8/10 border-b border-[#dddddd] p-2 flex gap-2 mt-10'>
+        className='w-8/10 border-b border-[#dddddd] p-2 flex gap-2 my-10'>
 
             {/* Transaction History Button Button */}
             <button
@@ -474,8 +490,101 @@ const GrpSetting = () => {
         <div
         className={`${settingsTab ? "" : "hidden"} w-8/10`}>
             
-            
+            {/* Displaying Group Members */}
+            <div
+            className='w-full flex flex-col gap-3'>
 
+                {/* Icon and Title */}
+                <div
+                className='flex items-center gap-3'>
+                    <img src="/group_active.svg" alt="" className='w-7 ' />
+                    <span
+                    className='font-bold text-xl'>
+                        Group Members
+                    </span>
+                </div>
+
+                    {
+                        members.map ( (user) => {
+                            const balance = due(user.fullName, group.dues)
+                            return (
+                                <div
+                                key={`${user.uid} container`}
+                                className='p-2 flex items-center gap-2'>
+                                    
+                                    {/* Image */}
+                                    <img
+                                    key={`${user.uid} pfp image`}
+                                     src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTyyCG3jGw_PZPj17ttBPAPxdgPdpLO020L9g&s" alt=""
+                                    className='w-18 h-18 rounded-full' />
+
+                                    {/* User Details */}
+                                    <div
+                                    key={`${user.uid} user details`}
+                                    className='flex flex-col flex-1 gap-0.5'>
+
+                                        {/* User Name */}
+                                        <span
+                                        key={`${user.uid} user name`}
+                                        className='font-bold'>
+                                            {user.fullName}
+                                        </span>
+
+                                        {/* Trust Score */}
+                                        <span
+                                        key={`${user.uid} user score`}
+                                        className='font-bold text-[#2C9986] text-sm text-center bg-[#D4EBE7] w-12 rounded-full'>
+                                            {user.score}
+                                        </span>
+                                    </div>
+
+                                    {/* User Balance */}
+                                    <div
+                                    key={`${user.uid} user balance container`}
+                                    className='flex flex-col flex-1 gap-0.5 items-center'>
+
+                                        {/* Balance Text */}
+                                        <span
+                                        key={`${user.uid} title balance`}
+                                        className='font-bold text-[#68827E] text-sm'>
+                                            BALANCE
+                                        </span>
+
+                                        {/* Balance */}
+                                        {/* settled up */}
+                                        <span
+                                        key={`${user.uid} settleup`}
+                                        className={`${balance === 0 ? "" : "hidden"} italic font-bold text-[#68827E]`}>
+                                            Settled Up
+                                        </span>
+
+                                        {/* you owe */}
+                                        <span
+                                        
+                                        key={`${user.uid} owe`}
+                                        className={`${balance < 0 ? "" : "hidden"} italic font-bold text-red-500`}>
+                                            You owe &#8377; {-balance}
+                                        </span>
+
+                                        {/* you are owed */}
+                                        <span
+                                        
+                                        key={`${user.uid} owed`}
+                                        className={`${balance > 0 ? "" : "hidden"} italic font-bold text-[#2C9986]`}>
+                                            You are owed &#8377; {balance}
+                                        </span>
+
+
+                                    </div>
+
+                                </div>
+
+                            )
+                        })
+                    }
+                
+
+            </div>
         </div>
 
     </div>
