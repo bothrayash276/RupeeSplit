@@ -1,6 +1,7 @@
 "use client"
 import { useParams } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
+import { transactionObj } from '../_groupFxn'
 
 const GrpSetting = () => {
 
@@ -13,6 +14,14 @@ const GrpSetting = () => {
 
     // Checks expense Popup
     const [expensePopUp, setExpensePopUp] = useState(false)
+
+    // Paid by Who
+    const [drop, setDrop] = useState(false)
+    const [paid, setPaid] = useState("Select a Person")
+    const handleDrop = (name) => {
+        setPaid(name)
+        setDrop(false)
+    }
 
     // Split Buttons
     const [equally, setEqually] = useState(true)
@@ -55,7 +64,31 @@ const GrpSetting = () => {
 
 
     // Function Adding Expenses
-    const addExpense = () => {
+    const addExpense = async () => {
+
+        if(equally) {
+
+            // Total Money
+            const totalMoney = document.getElementById('total money').value
+
+            // Stores total Participants
+            const participants = []
+    
+            // Separates out the users with checked box
+            members.map ( (user) => {
+                if(document.getElementById(`${user.uid} checkbox equally`).checked) {
+                    participants.push(user.fullName)
+                }
+                
+            })
+
+            // division of money
+            const division = totalMoney / participants.length
+            
+            // const transaction
+            const transac = await transactionObj(paid, participants, division)
+            console.log(transac)
+        }
 
     } 
 
@@ -84,6 +117,8 @@ const GrpSetting = () => {
                         </span>
                     </div>
 
+                   
+
                     {/* Middle Section */}
                     <div
                     className='bg-white w-150 flex flex-col items-center'>
@@ -104,6 +139,7 @@ const GrpSetting = () => {
                             {/* Money Input */}
                             <input 
                             type="number"
+                            id="total money"
                             placeholder='0.00'
                             min='0'
                             className='text-5xl w-100 text-center font-bold placeholder:text-black foucs: outline-none' />
@@ -124,13 +160,49 @@ const GrpSetting = () => {
 
                     </div>
 
+                    {/* Paid By Who Section */}
+                    <div
+                    className='w-150 bg-white flex flex-col items-center justify-center'>
+
+                        {/* Paid by Who Text */}
+                        <span
+                        className='text-sm w-7/10 mt-10'>
+                            Paid by who?
+                        </span>
+
+                        <button
+                        onBlur={()=>{setDrop(false)}}
+                        onClick={()=>{setDrop(!drop)}}
+                        className={`w-7/10 flex flex-col relative p-2 rounded-xl mt-2 ${drop ? "" : "text-xl font-bold underline underline-offset-6 decoration-[#2C9986]"} `}>
+                            <span className={`${drop ? "text-[#2C9886] font-bold" : ""}`}>{paid}</span>
+
+                        {drop && <div
+                        className='flex flex-col absolute left-1/2 top-8.25 -translate-x-1/2 w-full bg-white border border-[#dddddd] p-2 rounded-xl mt-2'>
+                            {members.map( (user) => {
+                                return (
+                                    <span
+                                    key={user.uid}
+                                    onClick={()=>{handleDrop(user.fullName)}}
+                                    className='flex items-center justify-center gap-3'>
+                                        <img src="/person.svg" alt="" />
+                                        {user.fullName}
+                                    </span>
+                                )
+                            } )}
+                        </div>  }           
+                        
+                        </button>
+
+                    </div>
+
+
                     {/* Money Division Section */}
                     <div
                     className='bg-white w-150 flex flex-col items-center border-b border-[#dddddd]'>
 
                         {/* Text Split Options */}
                         <span
-                        className='w-7/10 font-bold my-5'>
+                        className='w-7/10 font-bold my-5 mt-10'>
                             Split Options
                         </span>
 
@@ -168,27 +240,27 @@ const GrpSetting = () => {
                             { members.map ( (user) => {
                                 return (
                                     <div
-                                    onClick={() => {document.getElementById(`${user.uid} checkbox`).checked = !document.getElementById(`${user.uid} checkbox`).checked}}
-                                    key={`${user.uid} container`}
+                                    onClick={() => {document.getElementById(`${user.uid} checkbox equally`).checked = !document.getElementById(`${user.uid} checkbox equally`).checked}}
+                                    key={`${user.uid} container equally`}
                                     className='bg-white w-full p-3 border border-[#dddddd] flex gap-5 rounded-xl'>
 
                                         {/* Icon */}
                                         <img 
-                                        key={`${user.uid} icon`}
+                                        key={`${user.uid} icon equally`}
                                         src="/person.svg" 
                                         className='w-5' />
                                         
                                         {/* Full Name */}
                                         <span
-                                        key={`${user.uid} full name`}
+                                        key={`${user.uid} full name equally`}
                                         className='full font-bold flex-1'>
                                             {user.fullName}
                                         </span>
 
                                         {/* Checkbox */}
                                         <input 
-                                        key={`${user.uid} checkbox`}
-                                        id={`${user.uid} checkbox`}
+                                        key={`${user.uid} checkbox equally`}
+                                        id={`${user.uid} checkbox equally`}
                                         type="checkbox" 
                                         className='w-4 accent-[#2C9986] rounded-full'/>
                                     </div>
@@ -226,7 +298,7 @@ const GrpSetting = () => {
                                         {/* Number Input */}
                                         <input 
                                         key={`${user.uid} checkbox`}
-                                        id={`${user.uid} checkbox`}
+                                        id={`${user.uid} checkbox exact`}
                                         type="number" 
                                         defaultValue='0'
                                         placeholder='0.00'
@@ -264,7 +336,7 @@ const GrpSetting = () => {
                                         {/* Number Input */}
                                         <input 
                                         key={`${user.uid} checkbox`}
-                                        id={`${user.uid} checkbox`}
+                                        id={`${user.uid} checkbox ratio`}
                                         type="number" 
                                         defaultValue='1'
                                         placeholder='1'
@@ -274,7 +346,7 @@ const GrpSetting = () => {
                                 )
                             })}
                         </div>
-
+                        <div className='mb-10'></div>
                     </div>
 
                     {/* Save Section */}
@@ -282,7 +354,7 @@ const GrpSetting = () => {
                     className='rounded-2xl rounded-t-none bg-white w-150 flex items-center justify-center p-3'>
                         <button
                         onClick={addExpense}
-                        className='bg-[#2C9986] w-8/10 p-3 font-bold text-white rounded-2xl hover:bg-[#1e7f6f] cursor-pointer'>
+                        className='bg-[#2C9986] w-8/10 p-3 font-bold text-white rounded-2xl hover:bg-[#1e7f6f] cursor-pointer mt-5'>
                             Save Expense
                         </button>
                     </div>
