@@ -1,7 +1,7 @@
 "use client"
 import { useParams } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
-import { transactionObj } from '../_groupFxn'
+import { transactionObj, updateGroup } from '../_groupFxn'
 
 const GrpSetting = () => {
 
@@ -14,6 +14,10 @@ const GrpSetting = () => {
 
     // Checks expense Popup
     const [expensePopUp, setExpensePopUp] = useState(false)
+
+    const [transacTab, setTransacTab] = useState(true)
+    const [balanceTab, setBalanceTab] = useState(false)
+    const [settingsTab, setSettingsTab] = useState(false)
 
     // Paid by Who
     const [drop, setDrop] = useState(false)
@@ -68,6 +72,9 @@ const GrpSetting = () => {
 
         if(equally) {
 
+            // Title 
+            const title = document.getElementById('title').value
+
             // Total Money
             const totalMoney = document.getElementById('total money').value
 
@@ -84,11 +91,28 @@ const GrpSetting = () => {
 
             // division of money
             const division = totalMoney / participants.length
+
+            // Transaction history
+            const obj = {
+                "title" : title,
+                "Paid by" : paid,
+                "Split between" : participants,
+                "amount" : totalMoney,
+                "division" : division
+            }
             
             // const transaction
             const transac = await transactionObj(paid, participants, division)
-            console.log(transac)
+            const newGrp = {
+                ...group,
+                'transactions' : [...group.transactions, obj],
+                'dues' : transac
+            }
+            await updateGroup(newGrp)
         }
+
+        setExpensePopUp(false)
+        setLoading(true)
 
     } 
 
@@ -152,7 +176,8 @@ const GrpSetting = () => {
                         </span>
 
                         {/* Title Input */}
-                        <input 
+                        <input
+                        id='title' 
                         type="text"
                         placeholder='eg. Dinner at Burger King'
                         className='w-7/10 py-2 px-4 rounded-xl focus:outline-none border border-[#dddddd] focus:border-[#9b9b9b] my-2' />
@@ -416,6 +441,41 @@ const GrpSetting = () => {
                 <img src="/settle.svg" alt="" className='w-6' />
                 Settle Up
             </button>
+        </div>
+
+        {/* Navbar */}
+        <div
+        className='w-8/10 border-b border-[#dddddd] p-2 flex gap-2 mt-10'>
+
+            {/* Transaction History Button Button */}
+            <button
+            onClick={()=>{setTransacTab(true); setBalanceTab(false); setSettingsTab(false)}}
+            className={`${transacTab ? "text-[#2C9986] bg-[#D4EBE7]" : "text-[#68827E]"} font-bold cursor-pointer p-2 rounded-xl`}>
+                Transactions
+            </button>
+
+            {/* Balances Button */}
+            <button
+            onClick={()=>{setTransacTab(false); setBalanceTab(true); setSettingsTab(false)}}
+            className={`${balanceTab ? "text-[#2C9986] bg-[#D4EBE7]" : "text-[#68827E]"} font-bold cursor-pointer p-2 rounded-xl`}>
+                Balances
+            </button>
+
+            {/* Settings Button */}
+            <button
+            onClick={()=>{setTransacTab(false); setBalanceTab(false); setSettingsTab(true)}}
+            className={`${settingsTab ? "text-[#2C9986] bg-[#D4EBE7]" : "text-[#68827E]"} font-bold cursor-pointer p-2 rounded-xl`}>
+                Settings
+            </button>
+
+        </div>
+
+        {/* Settings Tab */}
+        <div
+        className={`${settingsTab ? "" : "hidden"} w-8/10`}>
+            
+            
+
         </div>
 
     </div>

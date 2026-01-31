@@ -78,7 +78,8 @@ const Groups = () => {
       'id': uuidv4(),
       'groupName': groupName,
       'members': [user.uid],
-      'transactions' : []
+      'transactions' : [],
+      'dues' : []
     }
     // Excludes _id from rest of data to avoid conflict with MongoDB
     const {_id, ...noIDuser} = user;

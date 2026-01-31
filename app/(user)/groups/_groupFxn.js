@@ -41,6 +41,17 @@ export async function transactionObj (paid, participants, division) {
         body : JSON.stringify(data)
     }).then( res => res.json())
 
-    return res    
+    return  res  
+}
+
+export async function updateGroup(data) {
+    const url = 'http://localhost:8080/updategrp'
+    await fetch(url, {
+        method : 'POST',
+        headers : {
+            'Content-Type' : 'application/json'
+        },
+        body : JSON.stringify(data)
+    })
 }
 
