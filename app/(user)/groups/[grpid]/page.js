@@ -43,7 +43,7 @@ const GrpSetting = () => {
         const load = async () => {
 
             // url
-            const url = `http://localhost:8080/findgrp/${groupID}`
+            const url = `${process.env.NEXT_PUBLIC_MONGO_URI}/findgrp/${groupID}`
 
             // getting data
             try {
@@ -54,7 +54,7 @@ const GrpSetting = () => {
                 // Loading members
                 const data2 = await Promise.all(
                     data.members.map((id) => {
-                        const url = `http://localhost:8080/grpmem/${id}`
+                        const url = `${process.env.NEXT_PUBLIC_MONGO_URI}/grpmem/${id}`
                         const res = fetch(url).then( res => res.json())
                         return res
                     })
@@ -121,7 +121,7 @@ const GrpSetting = () => {
 
     // Function to Exist Group
     const handleExit = async (userId, groupId) => {
-        const url = 'http://localhost:8080/deleteUserFromGroup'
+        const url = '${process.env.NEXT_PUBLIC_MONGO_URI}/deleteUserFromGroup'
         await fetch(url, {
             method : 'POST',
             headers : {

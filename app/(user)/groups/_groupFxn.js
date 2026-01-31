@@ -1,6 +1,6 @@
 export async function newGroup(data) {
     // url
-    const url = 'http://localhost:8080/newgrp';
+    const url = `${process.env.NEXT_PUBLIC_MONGO_URI}/newgrp`;
     await fetch(url, {
         method: 'POST',
         headers: {
@@ -11,7 +11,7 @@ export async function newGroup(data) {
 }
 
 export async function updateUser(user) {
-    const url = 'http://localhost:8080/update'
+    const url = `${process.env.NEXT_PUBLIC_MONGO_URI}/update`
     fetch(url, {
           method: 'POST',
           headers: {
@@ -32,7 +32,7 @@ export async function transactionObj (paid, participants, division) {
         data.push(obj)
     }
     
-    const url = 'http://localhost:8080/transaction'
+    const url = `${process.env.NEXT_PUBLIC_MONGO_URI}/transaction`
     const res = await fetch(url, {
         method : 'POST',
         headers : {
@@ -45,7 +45,7 @@ export async function transactionObj (paid, participants, division) {
 }
 
 export async function updateGroup(data) {
-    const url = 'http://localhost:8080/updategrp'
+    const url = `${process.env.NEXT_PUBLIC_MONGO_URI}/updategrp`
     await fetch(url, {
         method : 'POST',
         headers : {

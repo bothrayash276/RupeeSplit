@@ -27,7 +27,7 @@ const Register = () => {
     };
 
     // Connecting to Backend to send new user's data via POST
-    fetch("http://localhost:8080/register", {
+    fetch(`${process.env.NEXT_PUBLIC_MONGO_URI}/register`, {
       'method': 'POST',
       'body': JSON.stringify(userEntry),
       headers: {

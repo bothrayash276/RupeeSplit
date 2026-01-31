@@ -5,6 +5,8 @@ import {importGrpData, newGroup, updateUser} from './_groupFxn'
 import serverData_User from '@/app/_data'
 import { useSession } from 'next-auth/react'
 import Link from 'next/link'
+// import dotenv from 'dotenv'
+// dotenv.config()
 
 const Groups = () => {
   // Checks Loading
@@ -36,7 +38,7 @@ const Groups = () => {
           // Getting Groups Data
           const data2 = await Promise.all(
             data.groups.map( (id) => {
-              const url = `http://localhost:8080/findgrp/${id}`
+              const url = `${process.env.NEXT_PUBLIC_MONGO_URI}/findgrp/${id}`
               const res = fetch(url).then( res => res.json())
               return res
             })
@@ -72,6 +74,7 @@ const Groups = () => {
     if(document.getElementById('groupName-Laptop')?.value){
       groupName = document.getElementById('groupName-Laptop').value
     }
+
 
     // Group Template
     const groupInfo = {

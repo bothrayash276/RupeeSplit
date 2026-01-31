@@ -27,7 +27,7 @@ const Friends = () => {
     let userUID = document.getElementById("uidSearchBox").value;
     if (!userUID) userUID = document.getElementById("uidSearchBoxMobile").value;
 
-    fetch(`http://localhost:8080/findFriend/${userUID}`)
+    fetch(`${process.env.NEXT_PUBLIC_MONGO_URI}/findFriend/${userUID}`)
       .then((res) => res.json())
       .then((res) => setFriendInfo(res));
     if (!userUID) {
@@ -80,7 +80,7 @@ const Friends = () => {
       ...friendInfo,
       friends: myFriendFriends,
     };
-    await fetch("http://localhost:8080/addFriend", {
+    await fetch(`${process.env.NEXT_PUBLIC_MONGO_URI}/addFriend`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

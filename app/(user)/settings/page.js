@@ -52,7 +52,7 @@ const Settings = () => {
     setUser(newData);
 
     // Sends the object with new data to backend via POST
-    await fetch("http://localhost:8080/update", {
+    await fetch(`${process.env.NEXT_PUBLIC_MONGO_URI}/update`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -79,7 +79,7 @@ const Settings = () => {
     setUser(newData);
 
     // Sends the object with new data to backend via POST
-    await fetch("http://localhost:8080/update", {
+    await fetch(`${process.env.NEXT_PUBLIC_MONGO_URI}/update`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
