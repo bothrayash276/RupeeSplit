@@ -12,6 +12,7 @@ const Friends = () => {
 
   // Stores user info
   const [myinfo, setMyinfo] = useState()
+  const [myfriends, setMyfriends] = useState()
   // Stores friends info
   const [friendInfo, setFriendInfo] = useState({ doesExist: true });
 
@@ -34,6 +35,7 @@ const Friends = () => {
       setFetched(false);
     }
   };
+
 
   useEffect(() => {
     if (!friendInfo.doesExist) {
@@ -58,6 +60,13 @@ const Friends = () => {
         try {
           const data = await serverData_User(session.user.email)
           setMyinfo(data)
+          const friend = []
+          data.friends?.map(async (friendID) => {
+            const url = `${process.env.NEXT_PUBLIC_MONGO_URI}/findFriend/${friendID}`
+            const data = await fetch(url).then(res=>res.json())
+            friend.push(data)
+            setMyfriends(friend)
+          })
         }
         finally {
           setLoading(false)
@@ -76,6 +85,7 @@ const Friends = () => {
       ...myinfo,
       friends: myUserFriends,
     };
+    setMyinfo(myUser)
     const friendUser = {
       ...friendInfo,
       friends: myFriendFriends,
@@ -147,6 +157,44 @@ const Friends = () => {
           >
             Add Friend
           </span>
+        </div>
+
+        {/* Displaying Friends */}
+        <div
+        className="bg-white w-8/10 p-3 rounded-xl flex flex-col gap-3">
+          
+          {/* Title and Icon */}
+          <div
+          className="flex gap-3 text-xl font-bold">
+            <img src="/friends.svg" alt="" className="w-6"/>
+            Friends
+          </div>
+
+          {
+            myfriends?.map(friend => {
+              return (
+                <div
+                key={`${friend.uid} container`}
+                className="flex gap-3 items-center">
+                  <div className="flex gap-4 mt-3 items-center">
+              {/* Pfp Image */}
+              <img
+                src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTyyCG3jGw_PZPj17ttBPAPxdgPdpLO020L9g&s"
+                alt=""
+                className="w-20 rounded-full"
+              />
+              {/* Container storing Name, UID and Score */}
+              <div className="flex flex-col flex-1 gap-2">
+                <span className="font-bold text-xl">{friend.fullName}</span>
+                <span className="font-bold text-[#2A9D89] bg-[#D4EBE7] w-15 text-center rounded-full text-sm">
+                  {friend.score}
+                </span>
+              </div>
+            </div>
+                </div>
+              )
+            })
+          }
         </div>
       </div>
 
