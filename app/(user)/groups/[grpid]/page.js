@@ -175,7 +175,7 @@ const GrpSetting = () => {
 
     // Function to Exist Group
     const handleExit = async (userId, groupId) => {
-        const url = '${process.env.NEXT_PUBLIC_MONGO_URI}/deleteUserFromGroup'
+        const url = `${process.env.NEXT_PUBLIC_MONGO_URI}/deleteUserFromGroup`
         await fetch(url, {
             method : 'POST',
             headers : {
@@ -664,7 +664,8 @@ const GrpSetting = () => {
 
                                 </div>
 
-                                {Object.entries(group.dues[user.fullName]).map(([name, amount]) => {
+                                {Object.keys(group.dues).length ? Object.entries(group.dues[user.fullName]).map(([name, amount]) => {
+                                    if(!name) return
                                     return (
                                         <div
                                         key={`${user.uid} payee`}
@@ -686,7 +687,8 @@ const GrpSetting = () => {
                                             </span>
                                         </div>
                                     )
-                                })}
+                                })
+                                 : ""}
 
                                 </div>
 
@@ -705,6 +707,16 @@ const GrpSetting = () => {
             {/* Displaying Group Members */}
             <div
             className='w-full flex flex-col gap-3'>
+
+                <div
+                className='flex items-center justify-end w-full'>
+                    <div
+                    onClick={()=>{handleExit(operator.uid, group.id)}}
+                    className='flex items-center p-3 gap-2 bg-red-500 rounded-2xl text-white cursor-pointer'>
+                        <img src="/exit.svg" alt="" className='w-6'/>
+                        Leave Group
+                    </div>
+                </div>
 
                 {/* Icon and Title */}
                 <div

@@ -82,7 +82,7 @@ const Groups = () => {
       'groupName': groupName,
       'members': [user.uid],
       'transactions' : [],
-      'dues' : []
+      'dues' : {}
     }
     // Excludes _id from rest of data to avoid conflict with MongoDB
     const {_id, ...noIDuser} = user;
@@ -194,6 +194,7 @@ const Groups = () => {
       <div className="flex items-center justify-evenly gap-3 w-full h-full">
         {
           group.map ((mygrp) => {
+            if(!mygrp) return
             return (             
               <Link
               href={`/groups/${mygrp.id}`}
