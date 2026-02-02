@@ -607,6 +607,97 @@ const GrpSetting = () => {
 
         </div>
 
+        {/* Balance Tab */}
+        <div
+        className={`${balanceTab ? "" : "hidden"} w-8/10`}>
+            
+            {/* Displaying Group Members */}
+            <div
+            className='w-full flex flex-col gap-3'>
+
+                {/* Icon and Title */}
+                <div
+                className='flex items-center gap-3'>
+                    <img src="/balance.gif" alt="" className='w-7 ' />
+                    <span
+                    className='font-bold text-xl'>
+                        Account Balances
+                    </span>
+                </div>
+
+                    { 
+                        members.map ( (user) => {
+                            return (
+                                <div
+                                key={`${user.uid} mega container`}
+                                className='p-3 flex flex-col gap-2 bg-white rounded-xl'>
+
+                                <div
+                                key={`${user.uid} container`}
+                                className='p-2 flex items-center gap-2'>
+                                    
+                                    {/* Image */}
+                                    <img
+                                    key={`${user.uid} pfp image`}
+                                     src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTyyCG3jGw_PZPj17ttBPAPxdgPdpLO020L9g&s" alt=""
+                                    className='w-18 h-18 rounded-full' />
+
+                                    {/* User Details */}
+                                    <div
+                                    key={`${user.uid} user details`}
+                                    className='flex flex-col flex-1 gap-0.5'>
+
+                                        {/* User Name */}
+                                        <span
+                                        key={`${user.uid} user name`}
+                                        className='font-bold'>
+                                            {user.fullName}
+                                        </span>
+
+                                        {/* Trust Score */}
+                                        <span
+                                        key={`${user.uid} user score`}
+                                        className='font-bold text-[#2C9986] text-sm text-center bg-[#D4EBE7] w-12 rounded-full'>
+                                            {user.score}
+                                        </span>
+                                    </div>
+
+                                </div>
+
+                                {Object.entries(group.dues[user.fullName]).map(([name, amount]) => {
+                                    return (
+                                        <div
+                                        key={`${user.uid} payee`}
+                                        className='ml-25 flex'>
+                                            <span
+                                            key={`${user.uid} payee name`}
+                                            className='font-bold text-xl flex-1'>
+                                                {name}
+                                            </span>
+                                            <span
+                                            key={`${user.uid} owe print`}
+                                            className={`${amount < 0 ? "" : "hidden"} text-red-500 font-bold text-xl`}>
+                                                You owe &#8377; {-amount}
+                                            </span>
+                                            <span
+                                            key={`${user.uid} lend   print`}
+                                            className={`${amount > 0 ? "" : "hidden"} text-[#2C9986] font-bold text-xl`}>
+                                                You owe &#8377; {-amount}
+                                            </span>
+                                        </div>
+                                    )
+                                })}
+
+                                </div>
+
+                            )
+                        })
+                    }
+                
+
+            </div>
+        </div>
+
         {/* Settings Tab */}
         <div
         className={`${settingsTab ? "" : "hidden"} w-8/10`}>
