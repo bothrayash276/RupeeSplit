@@ -21,17 +21,8 @@ export async function updateUser(user) {
         })
 }
 
-export async function transactionObj (paid, participants, division) {
-    const data = []
-    for (let i = 0; i < participants.length; i++) {
-        const obj = {
-            "lend" : paid,
-            "owe" : participants[i],
-            "amount" : division
-        }
-        data.push(obj)
-    }
-    
+export async function transactionObj (data) {
+        
     const url = `${process.env.NEXT_PUBLIC_MONGO_URI}/transaction`
     const res = await fetch(url, {
         method : 'POST',
@@ -57,12 +48,22 @@ export async function updateGroup(data) {
 
 export function due (username, dues) {
     const data = dues[username];
+    if(!data){
+        return 0
+    }
     const portfolio = Object.values(data)
     let money = 0;
     for(let i = 0; i < portfolio.length; i++){
         money += Number(portfolio[i])
     }
-    console.log(Object.values(portfolio))
     return money
+}
+
+export function arrToStr (arr) {
+    let s = ``;
+    for( let i = 0; i < arr.length; i++ ){
+        s += `${arr[i]} `
+    }
+    return s;
 }
 

@@ -1,9 +1,16 @@
 "use client"
 import { redirect, RedirectType, useParams } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
-import { due, transactionObj, updateGroup } from '../_groupFxn'
+import { arrToStr, due, transactionObj, updateGroup } from '../_groupFxn'
+
+import {v4 as uuidv4} from 'uuid'
+import { useSession } from 'next-auth/react'
 
 const GrpSetting = () => {
+
+    // Loading Session
+    const { data:session, status} = useSession()
+    const [operator, setOperator] = useState()
 
     // Loading Page
     const [loading, setLoading] = useState(true)
@@ -43,30 +50,36 @@ const GrpSetting = () => {
         const load = async () => {
 
             // url
-            const url = `${process.env.NEXT_PUBLIC_MONGO_URI}/findgrp/${groupID}`
-
-            // getting data
-            try {
-                const res = await fetch(url)
-                const data = await res.json()
-                setGroup(data)
-
-                // Loading members
-                const data2 = await Promise.all(
-                    data.members.map((id) => {
-                        const url = `${process.env.NEXT_PUBLIC_MONGO_URI}/grpmem/${id}`
-                        const res = fetch(url).then( res => res.json())
-                        return res
-                    })
-                )
-                setMembers(data2)
-            }
-            finally {
-                setLoading(false)
+            if (status === 'authenticated') {
+                const email = session.user.email
+                const userurl = `${process.env.NEXT_PUBLIC_MONGO_URI}/find/${email}`
+                const data = await fetch(userurl).then(res => res.json())
+                setOperator(data)
+                const url = `${process.env.NEXT_PUBLIC_MONGO_URI}/findgrp/${groupID}`
+    
+                // getting data
+                try {
+                    const res = await fetch(url)
+                    const data = await res.json()
+                    setGroup(data)
+    
+                    // Loading members
+                    const data2 = await Promise.all(
+                        data.members.map((id) => {
+                            const url = `${process.env.NEXT_PUBLIC_MONGO_URI}/grpmem/${id}`
+                            const res = fetch(url).then( res => res.json())
+                            return res
+                        })
+                    )
+                    setMembers(data2)
+                }
+                finally {
+                    setLoading(false)
+                }
             }
         }
         load()
-    } , [group])
+    } , [group, status])
 
 
     // Function Adding Expenses
@@ -96,6 +109,7 @@ const GrpSetting = () => {
 
             // Transaction history
             const obj = {
+                "id" : uuidv4(),
                 "title" : title,
                 "Paid by" : paid,
                 "Split between" : participants,
@@ -104,7 +118,7 @@ const GrpSetting = () => {
             }
             
             // const transaction
-            const transac = await transactionObj(paid, participants, division)
+            const transac = await transactionObj([...group.transactions, obj])
             const newGrp = {
                 ...group,
                 'transactions' : [...group.transactions, obj],
@@ -112,6 +126,46 @@ const GrpSetting = () => {
             }
             await updateGroup(newGrp)
             setGroup(newGrp)
+
+            // Updating user database
+            const balance = due(operator.fullName, newGrp.dues)
+            let money
+            if(balance > 0) {
+                money = operator.lend + balance
+                const {_id, ...vari} = operator
+                const newUser = {
+                ...vari,
+                "lend" : money   
+                }
+                setOperator(newUser)
+                const updateUrl = `${process.env.NEXT_PUBLIC_MONGO_URI}/update`
+                await fetch(updateUrl, {
+                    method : 'POST',
+                    headers : {
+                        'Content-Type' : 'application/json'
+                    },
+                    body : JSON.stringify(newUser)
+                })
+            }
+            else if (balance < 0) {
+                money = operator.owe - balance
+                const {_id, ...vari} = operator
+                const newUser = {
+                    ...vari,
+                    "owe" : money
+                }
+                setOperator(newUser)
+                const updateUrl = `${process.env.NEXT_PUBLIC_MONGO_URI}/update`
+                await fetch(updateUrl, {
+                    method : 'POST',
+                    headers : {
+                        'Content-Type' : 'application/json'
+                    },
+                    body : JSON.stringify(newUser)
+                })
+                
+            }
+            
         }
 
         setExpensePopUp(false)
@@ -437,8 +491,9 @@ const GrpSetting = () => {
                     Your share in the total balance:
 
                     {/* Your Balance */}
-                    <span
-                    className='text-red-500 font-bold'>$500</span>
+                   <span
+                    className='text-red-500 font-bold'>$500
+                    </span>
                 </div>
             </div>
 
@@ -483,6 +538,72 @@ const GrpSetting = () => {
             className={`${settingsTab ? "text-[#2C9986] bg-[#D4EBE7]" : "text-[#68827E]"} font-bold cursor-pointer p-2 rounded-xl`}>
                 Settings
             </button>
+
+        </div>
+
+        {/* Transaction Tab */}
+        <div 
+        className={`${transacTab ? "" : "hidden"} w-8/10`}>
+
+            {/* Displaying Previous Transaction */}
+            <div
+            className='w-full flex flex-col gap-10'>            
+                {/* Recent Activity Heading */}
+                <div
+                className='flex gap-3 items-center'>
+
+                    {/* Recent Arrow Image */}
+                    <img src="/recent.gif" alt="" className='w-8' />
+
+                    {/* Recent Text */}
+                    <span
+                    className='text-xl font-bold'>
+                        Recent Activity
+                    </span>
+                </div>
+
+                {/* Function to Show all the transactions */}
+                {
+                    group.transactions.map( pay => {
+                        return (
+                            <div
+                            key={`${group.id} ${pay.id} 1`}
+                            className='bg-white flex gap-3 items-center p-3 rounded-xl'>
+
+                                {/* Title */}
+                                <div
+                                key={`${group.id} ${pay.title} 2`}
+                                className='flex flex-col flex-1 gap-1'>
+                                    <span
+                                    key={`${group.id} ${pay.id} 3`}
+                                    className='font-bold text-xl'>
+                                        {pay.title}
+                                    </span>
+                                    <span
+                                    key={`${group.id} ${pay.id} 4`}
+                                    className='text-[#68827E] text-sm font-bold'>
+                                        {pay["Paid by"]} paid &#x20B9; {pay.amount} for {arrToStr(pay["Split between"])} 
+                                    </span>
+                                </div>
+                                
+                                {/* Money */}
+                                <span
+                                key={`${group.id} ${pay.id} 5`}
+                                className='flex gap-1 items-center text-[#68827E] font-bold'>
+                                    <span
+                                    key={`${group.id} ${pay.id} 6`}
+                                    className='text-xl font-bold text-[#2C9986]'>
+                                        &#x20B9; {pay.division} 
+                                    </span>
+                                    per head
+                                </span>
+
+                            </div>
+                        )
+                    })
+                }
+
+            </div>
 
         </div>
 
