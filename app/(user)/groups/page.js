@@ -1,7 +1,7 @@
 "use client"
 import React, { useEffect, useMemo, useState } from 'react'
 import { v4 as uuidv4 } from 'uuid'
-import {importGrpData, newGroup, updateUser} from './_groupFxn'
+import {importGrpData, newGroup, updateUser, due} from './_groupFxn'
 import serverData_User from '@/app/_data'
 import { useSession } from 'next-auth/react'
 import Link from 'next/link'
@@ -253,11 +253,23 @@ const Groups = () => {
                 </span>
 
                 {/* Showcasing Balance */}
-                <span
+                {due(user.fullName, mygrp.dues) < 0 ? <span
                 key={`${mygrp.id} your balance`}
                 className='text-red-500 font-bold text-xl mt-2'>
-                  You owe $500
-                </span>
+                  You owe &#x20B9; {-due(user.fullName, mygrp.dues)}
+                </span> : ""}
+
+                {due(user.fullName, mygrp.dues) > 0 ? <span
+                key={`${mygrp.id} your balance`}
+                className='text-[#2C9986] font-bold text-xl mt-2'>
+                  You are owed &#x20B9; {due(user.fullName, mygrp.dues)}
+                </span> : ""}
+
+                {due(user.fullName, mygrp.dues) === 0 ? <span
+                key={`${mygrp.id} your balance`}
+                className='text-[#68827E] font-bold text-xl mt-2 italic'>
+                  Settled Up
+                </span> : ""}
 
               </Link>
             )

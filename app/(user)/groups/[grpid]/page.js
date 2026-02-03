@@ -22,16 +22,24 @@ const GrpSetting = () => {
     // Checks expense Popup
     const [expensePopUp, setExpensePopUp] = useState(false)
 
+    const [settleup, setSettleup] = useState(false)
+
     const [transacTab, setTransacTab] = useState(true)
     const [balanceTab, setBalanceTab] = useState(false)
     const [settingsTab, setSettingsTab] = useState(false)
 
     // Paid by Who
     const [drop, setDrop] = useState(false)
+    const [settledrop, setSettledrop] = useState(false)
     const [paid, setPaid] = useState("Select a Person")
+    const [repaid, setRepaid] = useState("Select a Person")
     const handleDrop = (name) => {
         setPaid(name)
         setDrop(false)
+    }
+    const handleSettledrop = (name) => {
+        setRepaid(name)
+        setSettledrop(false)
     }
 
     // Split Buttons
@@ -79,7 +87,7 @@ const GrpSetting = () => {
             }
         }
         load()
-    } , [group, status])
+    } , [group, status, expensePopUp, settleup])
 
 
     // Function Adding Expenses
@@ -172,6 +180,55 @@ const GrpSetting = () => {
         setLoading(true)
 
     } 
+
+    // Function Adding Expenses
+    const settleExpense = async () => {
+
+        // Total Money
+        const totalMoney = document.getElementById('total repayed money').value
+
+        // Transaction history
+        const obj = {
+            "id" : uuidv4(),
+            "title" : "Repayment",
+            "Paid by" : operator.fullName,
+            "Split between" : [repaid],
+            "amount" : totalMoney,
+            "division" : totalMoney
+        }
+            
+        // const transaction
+        const transac = await transactionObj([...group.transactions, obj])
+        const newGrp = {
+            ...group,
+            'transactions' : [...group.transactions, obj],
+            'dues' : transac
+        }
+
+        await updateGroup(newGrp)
+        setGroup(newGrp)
+
+        // Updating user database
+            const money = operator.owe - totalMoney
+            const {_id, ...vari} = operator
+            const newUser = {
+                ...vari,
+                "owe" : money
+            }
+            setOperator(newUser)
+            const updateUrl = `${process.env.NEXT_PUBLIC_MONGO_URI}/update`
+            await fetch(updateUrl, {
+                method : 'POST',
+                headers : {
+                    'Content-Type' : 'application/json'
+                },
+                body : JSON.stringify(newUser)
+            })    
+
+        setSettleup(false)
+        setLoading(true)
+
+    }
 
     // Function to Exist Group
     const handleExit = async (userId, groupId) => {
@@ -460,6 +517,110 @@ const GrpSetting = () => {
         )
     }
 
+    // Settle Popup Page
+    if(settleup) {
+        return (
+            <>
+            <div 
+            className="h-full w-full not-md:hidden flex flex-col p-2 items-center justify-center">
+
+                    {/* Top heading */}
+                    <div 
+                    className='flex flex-col gap-3 border-b border-[#dddddd] p-5 bg-white rounded-2xl rounded-b-none w-150'>
+                        <span
+                        className='text-3xl font-bold'>
+                            Settle the Dues
+                        </span>
+                        <span
+                        className='text-sm text-[#68827E]'>
+                            Clear the previous records of shared transaction and update your trust score
+                        </span>
+                    </div>
+
+                   
+
+                    {/* Middle Section */}
+                    <div
+                    className='bg-white w-150 flex flex-col items-center'>
+
+                        {/* Text Total Amount */}
+                        <span
+                        className='text-sm text-[#68827E] mt-8 font-bold'>
+                            TOTAL AMOUNT
+                        </span>
+
+                        {/* Money */}
+                        <div
+                        className='flex items-center justify-center mt-5'>
+
+                            {/* Rupee Icon */}
+                            <img src="/rupee.svg" alt="" className='w-9'/>
+
+                            {/* Money Input */}
+                            <input 
+                            type="number"
+                            id="total repayed money"
+                            placeholder='0.00'
+                            min='0'
+                            className='text-5xl w-100 text-center font-bold placeholder:text-black foucs: outline-none' />
+                        </div>
+
+                        
+
+                    </div>
+
+                    {/* Repayment to Whom */}
+                    <div
+                    className='w-150 bg-white flex flex-col items-center justify-center'>
+
+                        {/* Paid by Who Text */}
+                        <span
+                        className='text-sm w-7/10 mt-10'>
+                            Repaying to whom?
+                        </span>
+
+                        <button
+                        onBlur={()=>{setSettledrop(false)}}
+                        onClick={()=>{setSettledrop(!settledrop)}}
+                        className={`w-7/10 flex flex-col relative p-2 rounded-xl mt-2 ${settledrop ? "" : "text-xl font-bold underline underline-offset-6 decoration-[#2C9986]"} `}>
+                            <span className={`${settledrop ? "text-[#2C9886] font-bold" : ""}`}>{paid}</span>
+
+                        {settledrop && <div
+                        className='flex flex-col absolute left-1/2 top-8.25 -translate-x-1/2 w-full bg-white border border-[#dddddd] p-2 rounded-xl mt-2'>
+                            {members.map( (user) => {
+                                if(user.uid === operator.uid) return
+                                return (
+                                    <span
+                                    key={user.uid}
+                                    onClick={()=>{handleSettledrop(user.fullName)}}
+                                    className='flex items-center justify-center gap-3'>
+                                        <img src="/person.svg" alt="" />
+                                        {user.fullName}
+                                    </span>
+                                )
+                            } )}
+                        </div>  }           
+                        
+                        </button>
+
+                    </div>
+
+                    {/* Save Section */}
+                    <div
+                    className='rounded-2xl rounded-t-none bg-white w-150 flex items-center justify-center p-3'>
+                        <button
+                        onClick={settleExpense}
+                        className='bg-[#2C9986] w-8/10 p-3 font-bold text-white rounded-2xl hover:bg-[#1e7f6f] cursor-pointer mt-5'>
+                            Settle Up
+                        </button>
+                    </div>
+
+                </div>
+
+            </>
+        )
+    }
+
   return (
     <>
     {/* Laptop UI */}
@@ -491,9 +652,18 @@ const GrpSetting = () => {
                     Your share in the total balance:
 
                     {/* Your Balance */}
-                   <span
-                    className='text-red-500 font-bold'>$500
-                    </span>
+                   {due(operator.uid, group.dues) < 0 ? <span
+                    className='text-red-500 font-bold'>&#x20B9; {-due(operator.uid, group.dues)}
+                    </span> : ""}
+
+                    {due(operator.uid, group.dues) > 0 ? <span
+                    className='text-[#2C9986] font-bold'>&#x20B9; {due(operator.uid, group.dues)}
+                    </span> : ""}
+
+                    {due(operator.uid, group.dues) ===0 ? <span
+                    className='text-[#68827E] font-bold italic'>Settled up
+                    </span> : ""}
+                    
                 </div>
             </div>
 
@@ -507,7 +677,7 @@ const GrpSetting = () => {
 
             {/* Settle Up Button */}
             <button
-            onClick={() => {}}
+            onClick={() => {setSettleup(true)}}
             className='flex items-center justify-center gap-3 bg-[#F1F4F3] px-3 rounded-full h-12'>
                 <img src="/settle.svg" alt="" className='w-6' />
                 Settle Up
@@ -665,7 +835,7 @@ const GrpSetting = () => {
                                 </div>
 
                                 {Object.keys(group.dues).length ? Object.entries(group.dues[user.fullName]).map(([name, amount]) => {
-                                    if(!name) return
+                                    if(!name || amount === 0) return
                                     return (
                                         <div
                                         key={`${user.uid} payee`}
@@ -683,7 +853,7 @@ const GrpSetting = () => {
                                             <span
                                             key={`${user.uid} lend   print`}
                                             className={`${amount > 0 ? "" : "hidden"} text-[#2C9986] font-bold text-xl`}>
-                                                You owe &#8377; {-amount}
+                                                You are owed &#8377; {amount}
                                             </span>
                                         </div>
                                     )
