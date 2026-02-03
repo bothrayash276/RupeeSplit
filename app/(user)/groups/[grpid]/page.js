@@ -96,7 +96,7 @@ const GrpSetting = () => {
         if(equally) {
 
             // Title 
-            const title = document.getElementById('title').value
+            const title = document.getElementById('title').value || "Payment"
 
             // Total Money
             const totalMoney = document.getElementById('total money').value
