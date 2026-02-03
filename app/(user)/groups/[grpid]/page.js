@@ -89,7 +89,6 @@ const GrpSetting = () => {
         load()
     } , [group, status, expensePopUp, settleup])
 
-
     // Function Adding Expenses
     const addExpense = async () => {
 
@@ -652,15 +651,15 @@ const GrpSetting = () => {
                     Your share in the total balance:
 
                     {/* Your Balance */}
-                   {due(operator.uid, group.dues) < 0 ? <span
-                    className='text-red-500 font-bold'>&#x20B9; {-due(operator.uid, group.dues)}
+                   {due(operator.fullName, group.dues) < 0 ? <span
+                    className='text-red-500 font-bold'>&#x20B9;{-due(operator.fullName, group.dues)}
                     </span> : ""}
 
-                    {due(operator.uid, group.dues) > 0 ? <span
-                    className='text-[#2C9986] font-bold'>&#x20B9; {due(operator.uid, group.dues)}
+                    {due(operator.fullName, group.dues) > 0 ? <span
+                    className='text-[#2C9986] font-bold'>&#x20B9; {due(operator.fullName, group.dues)}
                     </span> : ""}
 
-                    {due(operator.uid, group.dues) ===0 ? <span
+                    {due(operator.fullName, group.dues) ===0 ? <span
                     className='text-[#68827E] font-bold italic'>Settled up
                     </span> : ""}
                     
