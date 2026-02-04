@@ -256,8 +256,10 @@ const GrpSetting = () => {
 
                     {/* Top heading */}
                     <div 
-                    className='flex flex-col gap-3 border-b border-[#dddddd] p-5 bg-white rounded-2xl rounded-b-none w-150'>
-                        <span
+                    className='flex border-b border-[#dddddd] p-5 bg-white rounded-2xl rounded-b-none w-150'>
+                        <div
+                        className='flex flex-col gap-3 flex-1'>
+                            <span
                         className='text-3xl font-bold'>
                             Add an Expense
                         </span>
@@ -265,6 +267,11 @@ const GrpSetting = () => {
                         className='text-sm text-[#68827E]'>
                             Record a new shared transaction and update your trust score
                         </span>
+                        </div>
+                        <img
+                        onClick={() => {setExpensePopUp(false)}} 
+                        src="/close.svg" alt=""  
+                        className='w-8 cursor-pointer'/>
                     </div>
 
                    
@@ -525,8 +532,10 @@ const GrpSetting = () => {
 
                     {/* Top heading */}
                     <div 
-                    className='flex flex-col gap-3 border-b border-[#dddddd] p-5 bg-white rounded-2xl rounded-b-none w-150'>
-                        <span
+                    className='flex border-b border-[#dddddd] p-5 bg-white rounded-2xl rounded-b-none w-150'>
+                        <div
+                        className='flex flex-col gap-3 flex-1'>
+                            <span
                         className='text-3xl font-bold'>
                             Settle the Dues
                         </span>
@@ -534,6 +543,11 @@ const GrpSetting = () => {
                         className='text-sm text-[#68827E]'>
                             Clear the previous records of shared transaction and update your trust score
                         </span>
+                        </div>
+                        <img
+                        onClick={() => {setSettleup(false)}} 
+                        src="/close.svg" alt=""  
+                        className='w-8 cursor-pointer'/>
                     </div>
 
                    

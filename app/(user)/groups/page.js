@@ -191,7 +191,7 @@ const Groups = () => {
       </div>
 
       {/* Group Cards Container */}
-      <div className="flex items-center justify-evenly gap-3 w-full h-full">
+      <div className="flex items-center gap-10 w-full h-full mt-1 py-3 px-10">
         {
           group.map ((mygrp) => {
             if(!mygrp) return
