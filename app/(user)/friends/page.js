@@ -60,13 +60,12 @@ const Friends = () => {
         try {
           const data = await serverData_User(session.user.email)
           setMyinfo(data)
-          const friend = []
-          data.friends?.map(async (friendID) => {
+          const friend = data.friends?.map((friendID) => {
             const url = `${process.env.NEXT_PUBLIC_MONGO_URI}/findFriend/${friendID}`
-            const data = await fetch(url).then(res=>res.json())
-            friend.push(data)
-            setMyfriends(friend)
+            const data = fetch(url).then(res=>res.json())
+            return data
           })
+          await Promise.all(friend).then( value => setMyfriends(value))          
         }
         finally {
           setLoading(false)
