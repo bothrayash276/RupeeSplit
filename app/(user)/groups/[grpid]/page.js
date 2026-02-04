@@ -138,13 +138,22 @@ const GrpSetting = () => {
 
             // Updating user database
             const balance = due(operator.fullName, newGrp.dues)
-            let money
+            const oldBalance = due(operator.fullName, group.dues)
             if(balance > 0) {
-                money = operator.lend + balance
                 const {_id, ...vari} = operator
-                const newUser = {
+                let newUser
+                if(oldBalance < 0) {
+                newUser = {
                 ...vari,
-                "lend" : money   
+                "lend" : operator.lend,
+                "owe" : operator.owe - oldBalance   
+                }
+            }
+                else {
+                newUser = {
+                    ...vari,
+                    "lend" : operator.lend - oldBalance + balance,   
+                }   
                 }
                 setOperator(newUser)
                 const updateUrl = `${process.env.NEXT_PUBLIC_MONGO_URI}/update`
@@ -157,11 +166,20 @@ const GrpSetting = () => {
                 })
             }
             else if (balance < 0) {
-                money = operator.owe - balance
                 const {_id, ...vari} = operator
-                const newUser = {
+                let newUser
+                if(oldBalance > 0) {
+                    newUser = {
                     ...vari,
-                    "owe" : money
+                    "lend" : operator.lend - oldBalance,
+                    "owe" : operator.owe + balance
+                    }
+                }
+                else {
+                    newUser = {
+                    ...vari,
+                    "owe" : operator.owe + balance
+                }
                 }
                 setOperator(newUser)
                 const updateUrl = `${process.env.NEXT_PUBLIC_MONGO_URI}/update`
@@ -210,11 +228,12 @@ const GrpSetting = () => {
         setGroup(newGrp)
 
         // Updating user database
-            const money = operator.owe - totalMoney
+        if(-operator.owe >= totalMoney ){
+            const money = Number(operator.owe) + Number(totalMoney)
             const {_id, ...vari} = operator
             const newUser = {
                 ...vari,
-                "owe" : money
+                "owe" : Number(money)
             }
             setOperator(newUser)
             const updateUrl = `${process.env.NEXT_PUBLIC_MONGO_URI}/update`
@@ -224,7 +243,27 @@ const GrpSetting = () => {
                     'Content-Type' : 'application/json'
                 },
                 body : JSON.stringify(newUser)
-            })    
+            }) 
+        }
+        else {
+            const excess = due(operator.fullName, group.dues)
+            const money = Number(operator.owe) + Number(totalMoney)
+            const {_id, ...vari} = operator
+            const newUser = {
+                ...vari,
+                "owe" : Number(operator.owe) - Number(excess),
+                "lend" : Number(operator.lend) + Number(money)
+            }
+            setOperator(newUser)
+            const updateUrl = `${process.env.NEXT_PUBLIC_MONGO_URI}/update`
+            await fetch(updateUrl, {
+                method : 'POST',
+                headers : {
+                    'Content-Type' : 'application/json'
+                },
+                body : JSON.stringify(newUser)
+            }) 
+        }   
 
         setSettleup(false)
         setLoading(true)
