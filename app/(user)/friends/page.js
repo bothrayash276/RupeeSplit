@@ -19,6 +19,7 @@ const Friends = () => {
 
   // Checks if entered UID is valid or not
   const [invalidUID, setInvalidUID] = useState(false);
+  const [emptyInbox, setEmptyInbox] = useState(false);
 
   // Checks if data is fetched or not
   const [fetched, setFetched] = useState(false);
@@ -28,6 +29,13 @@ const Friends = () => {
     // Gets UID of friend from input box
     let userUID = document.getElementById("uidSearchBox").value;
     if (!userUID) userUID = document.getElementById("uidSearchBoxMobile").value;
+    if(!userUID) {
+      setEmptyInbox(true)
+      setTimeout(() => {
+        setEmptyInbox(false)
+      }, 1000);
+      return
+    }
 
     fetch(`${process.env.NEXT_PUBLIC_MONGO_URI}/findFriend/${userUID}`)
       .then((res) => res.json())
@@ -111,7 +119,7 @@ const Friends = () => {
     <>
       {/* Laptop UI */}
       <div className="not-md:hidden flex flex-col h-full w-full items-center justify-center">
-        <div className="bg-white w-8/10 flex flex-col gap-4 items-center justify-center my-10 py-5 rounded-lg">
+        <div className="bg-white w-8/10 flex flex-col gap-4 items-center justify-center mt-10 py-5 rounded-lg">
           <span className="text-2xl font-bold">Find your Friends</span>
           <span className="text-gray-500">
             Split bills instantly with people you trust. Search by UID
@@ -136,9 +144,12 @@ const Friends = () => {
           <span className={`${invalidUID ? "" : "hidden"} text-red-500`}>
             User Not Found.... Unvalid UID!
           </span>
+          <span className={`${emptyInbox ? "" : "hidden"} text-red-500`}>
+          Inbox cannot be empty!
+        </span>
         </div>
         <div
-          className={`${fetched ? "" : "hidden"} flex flex-col gap-3 items-center justify-center bg-white py-5 px-10 rounded-lg`}
+          className={`${fetched ? "" : "hidden"} w-8/10 flex flex-col gap-3 items-center justify-center bg-white py-5 px-10 rounded-lg`}
         >
           <img
             src="https://wallpapers.com/images/featured/pfp-pictures-ph6qxvz14p4uvj2j.jpg"
@@ -146,8 +157,8 @@ const Friends = () => {
             className="w-30 rounded-full"
           />
           <span className="font-bold text-2xl">{friendInfo.fullName}</span>
-          <span className="text-[#20B69D] text-sm bg-[#D4EBE7] px-3 py-0.5 rounded-full">
-            {friendInfo.score}
+          <span className="text-[#20B69D] text-sm bg-[#D4EBE7] px-3 py-0.5 rounded-full font-bold">
+            TRUST: {friendInfo.score}
           </span>
           <span className="text-gray-500 text-sm">UID: {friendInfo.uid}</span>
           <span
@@ -186,8 +197,8 @@ const Friends = () => {
               {/* Container storing Name, UID and Score */}
               <div className="flex flex-col flex-1 gap-2">
                 <span className="font-bold text-xl">{friend.fullName}</span>
-                <span className="font-bold text-[#2A9D89] bg-[#D4EBE7] w-15 text-center rounded-full text-sm">
-                  {friend.score}
+                <span className="font-bold text-[#2A9D89] bg-[#D4EBE7] w-25 text-center rounded-full text-sm">
+                  TRUST: {friend.score}
                 </span>
               </div>
             </div>
@@ -214,6 +225,9 @@ const Friends = () => {
         <span className={`${invalidUID ? "" : "hidden"} text-red-500`}>
           User Not Found.... Unvalid UID!
         </span>
+        <span className={`${emptyInbox ? "" : "hidden"} text-red-500`}>
+          Inbox cannot be empty!
+        </span>
         <div
           className={`${fetched ? "" : "hidden"} flex flex-col gap-3 items-center justify-center py-5 px-10 rounded-lg`}
         >
@@ -223,8 +237,8 @@ const Friends = () => {
             className="w-30 rounded-full"
           />
           <span className="font-bold text-2xl">{friendInfo.fullName}</span>
-          <span className="text-[#20B69D] text-sm bg-[#D4EBE7] px-3 py-0.5 rounded-full">
-            {friendInfo.score}
+          <span className="text-[#20B69D] text-sm bg-[#D4EBE7] px-3 py-0.5 rounded-full font-bold">
+            TRUST: {friendInfo.score}
           </span>
           <span className="text-gray-500 text-sm">UID: {friendInfo.uid}</span>
           <span

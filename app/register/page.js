@@ -22,7 +22,7 @@ const Register = () => {
       "groups": [],
       "lend": 0,
       "owe": 0,
-      "score": 500,
+      "score": 70,
       "doesExist": true,
     };
 
