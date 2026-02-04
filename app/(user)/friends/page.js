@@ -1,5 +1,6 @@
 "use client";
 import serverData_User from "@/app/_data";
+import PageLoading from "@/app/Loading";
 import { useSession } from "next-auth/react";
 import React, { useEffect, useState } from "react";
 
@@ -103,7 +104,7 @@ const Friends = () => {
   };
 
   if(loading){
-    return <>Please Wait</>
+    return <><PageLoading/></>
   }
 
   return (

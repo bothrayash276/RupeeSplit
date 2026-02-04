@@ -5,6 +5,7 @@ import { arrToStr, due, transactionObj, updateGroup } from '../_groupFxn'
 
 import {v4 as uuidv4} from 'uuid'
 import { useSession } from 'next-auth/react'
+import PageLoading from '@/app/Loading'
 
 const GrpSetting = () => {
 
@@ -14,6 +15,7 @@ const GrpSetting = () => {
 
     // Loading Page
     const [loading, setLoading] = useState(true)
+    const [deleting, setDeleting] = useState(false)
 
     // Save Group Data
     const [group, setGroup] = useState()
@@ -243,8 +245,8 @@ const GrpSetting = () => {
     }
 
     // Loading Page
-    if(loading){
-        return <>Loading...</>
+    if(loading || deleting){
+        return <><PageLoading/></>
     }
 
     // Expense PopUp Page
@@ -894,7 +896,7 @@ const GrpSetting = () => {
                 <div
                 className='flex items-center justify-end w-full'>
                     <div
-                    onClick={()=>{handleExit(operator.uid, group.id)}}
+                    onClick={()=>{handleExit(operator.uid, group.id); setDeleting(true)}}
                     className='flex items-center p-3 gap-2 bg-red-500 rounded-2xl text-white cursor-pointer'>
                         <img src="/exit.svg" alt="" className='w-6'/>
                         Leave Group

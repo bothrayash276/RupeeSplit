@@ -5,6 +5,7 @@ import {importGrpData, newGroup, updateUser, due} from './_groupFxn'
 import serverData_User from '@/app/_data'
 import { useSession } from 'next-auth/react'
 import Link from 'next/link'
+import PageLoading from '@/app/Loading'
 // import dotenv from 'dotenv'
 // dotenv.config()
 
@@ -104,7 +105,7 @@ const Groups = () => {
 
   // Loading Screen
   if(loading){
-    return <>Loading....</>
+    return <><PageLoading/></>
   }
 
   // PopUp of Obtaining a Group Name
