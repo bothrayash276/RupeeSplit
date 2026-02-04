@@ -6,6 +6,7 @@ import { arrToStr, due, transactionObj, updateGroup } from '../_groupFxn'
 import {v4 as uuidv4} from 'uuid'
 import { useSession } from 'next-auth/react'
 import PageLoading from '@/app/Loading'
+import setArray from '../../friends/_setArray'
 
 const GrpSetting = () => {
 
@@ -29,6 +30,9 @@ const GrpSetting = () => {
     const [transacTab, setTransacTab] = useState(true)
     const [balanceTab, setBalanceTab] = useState(false)
     const [settingsTab, setSettingsTab] = useState(false)
+
+    const [inviteFriend, setInviteFriend] = useState(false)
+    const [displayInvite, setDisplayInvite] = useState(false)
 
     // Paid by Who
     const [drop, setDrop] = useState(false)
@@ -64,6 +68,7 @@ const GrpSetting = () => {
                 const email = session.user.email
                 const userurl = `${process.env.NEXT_PUBLIC_MONGO_URI}/find/${email}`
                 const data = await fetch(userurl).then(res => res.json())
+                const userD = data
                 setOperator(data)
                 const url = `${process.env.NEXT_PUBLIC_MONGO_URI}/findgrp/${groupID}`
     
@@ -75,13 +80,23 @@ const GrpSetting = () => {
     
                     // Loading members
                     const data2 = await Promise.all(
-                        data.members.map((id) => {
+                        data.members?.map((id) => {
                             const url = `${process.env.NEXT_PUBLIC_MONGO_URI}/grpmem/${id}`
                             const res = fetch(url).then( res => res.json())
                             return res
                         })
                     )
                     setMembers(data2)
+                    
+
+                    // Getting Invite Friends
+                    const friends = userD.friends.map((friendID) => {
+                        const url = `${process.env.NEXT_PUBLIC_MONGO_URI}/findFriend/${friendID}`
+                        return fetch(url).then(res=>res.json())
+                    })
+                    await Promise.all(friends).then(value => setDisplayInvite(value))
+                    
+                    
                 }
                 finally {
                     setLoading(false)
@@ -192,6 +207,31 @@ const GrpSetting = () => {
                 })
                 
             }
+            else {
+                 const {_id, ...vari} = operator
+                let newUser
+                if(oldBalance > 0) {
+                    newUser = {
+                    ...vari,
+                    "lend" : operator.lend - oldBalance
+                    }
+                }
+                else {
+                    newUser = {
+                    ...vari,
+                    "owe" : operator.owe - oldBalance
+                }
+                }
+                setOperator(newUser)
+                const updateUrl = `${process.env.NEXT_PUBLIC_MONGO_URI}/update`
+                await fetch(updateUrl, {
+                    method : 'POST',
+                    headers : {
+                        'Content-Type' : 'application/json'
+                    },
+                    body : JSON.stringify(newUser)
+                })
+            }
             
         }
 
@@ -281,6 +321,37 @@ const GrpSetting = () => {
             body : JSON.stringify([userId,groupId])
         })
         redirect('/groups', RedirectType.replace)
+    }
+
+    // Invite a friend in a group
+    const invite = async (uid) => {
+
+        // Get the friend
+        const [d1] = displayInvite.filter((person)=>uid===person.uid)
+
+        const newFriendData = {
+            ...d1,
+            "groups" : setArray([...d1.groups, group.id])
+        }
+        
+        // Get New Group
+        const newGroupData = {
+            ...group,
+            "members" : setArray([...group.members, uid])
+        }
+        setGroup(newGroupData)
+
+        console.log(newGroupData)
+
+        const url = `${process.env.NEXT_PUBLIC_MONGO_URI}/grpInvite`
+        await fetch(url, {
+            method : 'POST',
+            headers : {
+                'Content-Type' : 'application/json'
+            },
+            body : JSON.stringify([newFriendData, newGroupData])
+        })
+
     }
 
     // Loading Page
@@ -675,6 +746,60 @@ const GrpSetting = () => {
         )
     }
 
+    if(inviteFriend) {
+        return (
+            <>
+            <div
+            className='flex flex-col h-full w-full p-7'>
+                {
+                        displayInvite.map ( (user) => {
+                            return (
+                                <div
+                                key={`${user.uid} container`}
+                                className='p-2 flex items-center gap-2'>
+                                    
+                                    {/* Image */}
+                                    <img
+                                    key={`${user.uid} pfp image`}
+                                     src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTyyCG3jGw_PZPj17ttBPAPxdgPdpLO020L9g&s" alt=""
+                                    className='w-18 h-18 rounded-full' />
+
+                                    {/* User Details */}
+                                    <div
+                                    key={`${user.uid} user details`}
+                                    className='flex flex-col flex-1 gap-0.5'>
+
+                                        {/* User Name */}
+                                        <span
+                                        key={`${user.uid} user name`}
+                                        className='font-bold'>
+                                            {user.fullName}
+                                        </span>
+
+                                        {/* Trust Score */}
+                                        <span
+                                        key={`${user.uid} user score`}
+                                        className='font-bold text-[#2C9986] text-sm text-center bg-[#D4EBE7] w-25 rounded-full'>
+                                            TRUST: {user.score}
+                                        </span>
+                                    </div>
+
+                                    {/* Invite Button */}
+                                    <button
+                                    onClick={()=>{invite(user.uid)}}
+                                    className='w-1/10 p-2 bg-[#D4EBE7] text-[#2C9986] font-bold rounded-full'>
+                                        Invite
+                                    </button>
+                                </div>
+
+                            )
+                        })
+                    }
+            </div>
+            </>
+        )
+    }
+
   return (
     <>
     {/* Laptop UI */}
@@ -881,8 +1006,8 @@ const GrpSetting = () => {
                                         {/* Trust Score */}
                                         <span
                                         key={`${user.uid} user score`}
-                                        className='font-bold text-[#2C9986] text-sm text-center bg-[#D4EBE7] w-12 rounded-full'>
-                                            {user.score}
+                                        className='font-bold text-[#2C9986] text-sm text-center bg-[#D4EBE7] w-25 rounded-full'>
+                                            TRUST: {user.score}
                                         </span>
                                     </div>
 
@@ -933,7 +1058,17 @@ const GrpSetting = () => {
             className='w-full flex flex-col gap-3'>
 
                 <div
-                className='flex items-center justify-end w-full'>
+                className='flex items-center justify-end w-full gap-5'>
+                    
+                    {/* Add Friend */}
+                    <div
+                    onClick={()=>{setInviteFriend(true)}}
+                    className='flex items-center p-3 gap-2 bg-[#D4EBE7] rounded-2xl text-[#2C9986] cursor-pointer'>
+                        <img src="/addFriend_active.svg" alt="" className='w-6'/>
+                        Invite a Friend
+                    </div>
+
+                    {/* Leave Group */}
                     <div
                     onClick={()=>{handleExit(operator.uid, group.id); setDeleting(true)}}
                     className='flex items-center p-3 gap-2 bg-red-500 rounded-2xl text-white cursor-pointer'>
@@ -981,8 +1116,8 @@ const GrpSetting = () => {
                                         {/* Trust Score */}
                                         <span
                                         key={`${user.uid} user score`}
-                                        className='font-bold text-[#2C9986] text-sm text-center bg-[#D4EBE7] w-12 rounded-full'>
-                                            {user.score}
+                                        className='font-bold text-[#2C9986] text-sm text-center bg-[#D4EBE7] w-25 rounded-full'>
+                                            TRUST: {user.score}
                                         </span>
                                     </div>
 

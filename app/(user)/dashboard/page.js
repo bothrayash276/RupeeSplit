@@ -110,7 +110,7 @@ const Dashboard = () => {
             {/* Net Balance */}
             <span
             className="lg:text-6xl md:text-4x6 font-bold text-white flex-1 flex items-center">
-             &#x20B9; {user.lend - user.owe}
+             &#x20B9; {user.lend + user.owe}
             </span>
 
             {/* View Button */}
