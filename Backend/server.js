@@ -6,7 +6,7 @@ import Transactions from "./minimumTransaction.js";
 import { MongoClient } from "mongodb";
 import { removefromGroup, removefromUserDB } from "./removeFromGroup.js";
 const app = express();
-const port = process.send.PORT;
+const port = process.env.PORT;
 
 const client = new MongoClient(process.env.MONGODB_URI);
 
