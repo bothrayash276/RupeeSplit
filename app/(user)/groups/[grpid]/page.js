@@ -106,6 +106,90 @@ const GrpSetting = () => {
         load()
     } , [group, status, expensePopUp, settleup])
 
+    // Lend Owe Updating Function
+    const lendOwe = async (op, group, newGrp) => {
+        const balance = due(op.fullName, newGrp.dues)
+            const oldBalance = due(op.fullName, group.dues)
+            if(balance > 0) {
+                const {_id, ...vari} = op
+                let newUser
+                if(oldBalance < 0) {
+                newUser = {
+                ...vari,
+                "lend" : op.lend,
+                "owe" : op.owe - oldBalance   
+                }
+            }
+                else {
+                newUser = {
+                    ...vari,
+                    "lend" : op.lend - oldBalance + balance,   
+                }   
+                }
+                if(operator.uid === op.uid) setOperator(newUser)
+                const updateUrl = `${process.env.NEXT_PUBLIC_MONGO_URI}/update`
+                return fetch(updateUrl, {
+                    method : 'POST',
+                    headers : {
+                        'Content-Type' : 'application/json'
+                    },
+                    body : JSON.stringify(newUser)
+                })
+            }
+            else if (balance < 0) {
+                const {_id, ...vari} = op
+                let newUser
+                if(oldBalance > 0) {
+                    newUser = {
+                    ...vari,
+                    "lend" : op.lend - oldBalance,
+                    "owe" : op.owe + balance
+                    }
+                }
+                else {
+                    newUser = {
+                    ...vari,
+                    "owe" : op.owe + balance
+                }
+                }
+                if(operator.uid === op.uid) setOperator(newUser)
+                const updateUrl = `${process.env.NEXT_PUBLIC_MONGO_URI}/update`
+                return fetch(updateUrl, {
+                    method : 'POST',
+                    headers : {
+                        'Content-Type' : 'application/json'
+                    },
+                    body : JSON.stringify(newUser)
+                })
+                
+            }
+            else {
+                 const {_id, ...vari} = op
+                let newUser
+                if(oldBalance > 0) {
+                    newUser = {
+                    ...vari,
+                    "lend" : op.lend - oldBalance
+                    }
+                }
+                else {
+                    newUser = {
+                    ...vari,
+                    "owe" : op.owe - oldBalance
+                }
+                }
+                if(operator.uid === op.uid) setOperator(newUser)
+                const updateUrl = `${process.env.NEXT_PUBLIC_MONGO_URI}/update`
+                return fetch(updateUrl, {
+                    method : 'POST',
+                    headers : {
+                        'Content-Type' : 'application/json'
+                    },
+                    body : JSON.stringify(newUser)
+                })
+            }
+    }
+
     // Function Adding Expenses
     const addExpense = async () => {
 
@@ -152,86 +236,10 @@ const GrpSetting = () => {
             setGroup(newGrp)
 
             // Updating user database
-            const balance = due(operator.fullName, newGrp.dues)
-            const oldBalance = due(operator.fullName, group.dues)
-            if(balance > 0) {
-                const {_id, ...vari} = operator
-                let newUser
-                if(oldBalance < 0) {
-                newUser = {
-                ...vari,
-                "lend" : operator.lend,
-                "owe" : operator.owe - oldBalance   
-                }
-            }
-                else {
-                newUser = {
-                    ...vari,
-                    "lend" : operator.lend - oldBalance + balance,   
-                }   
-                }
-                setOperator(newUser)
-                const updateUrl = `${process.env.NEXT_PUBLIC_MONGO_URI}/update`
-                await fetch(updateUrl, {
-                    method : 'POST',
-                    headers : {
-                        'Content-Type' : 'application/json'
-                    },
-                    body : JSON.stringify(newUser)
-                })
-            }
-            else if (balance < 0) {
-                const {_id, ...vari} = operator
-                let newUser
-                if(oldBalance > 0) {
-                    newUser = {
-                    ...vari,
-                    "lend" : operator.lend - oldBalance,
-                    "owe" : operator.owe + balance
-                    }
-                }
-                else {
-                    newUser = {
-                    ...vari,
-                    "owe" : operator.owe + balance
-                }
-                }
-                setOperator(newUser)
-                const updateUrl = `${process.env.NEXT_PUBLIC_MONGO_URI}/update`
-                await fetch(updateUrl, {
-                    method : 'POST',
-                    headers : {
-                        'Content-Type' : 'application/json'
-                    },
-                    body : JSON.stringify(newUser)
-                })
-                
-            }
-            else {
-                 const {_id, ...vari} = operator
-                let newUser
-                if(oldBalance > 0) {
-                    newUser = {
-                    ...vari,
-                    "lend" : operator.lend - oldBalance
-                    }
-                }
-                else {
-                    newUser = {
-                    ...vari,
-                    "owe" : operator.owe - oldBalance
-                }
-                }
-                setOperator(newUser)
-                const updateUrl = `${process.env.NEXT_PUBLIC_MONGO_URI}/update`
-                await fetch(updateUrl, {
-                    method : 'POST',
-                    headers : {
-                        'Content-Type' : 'application/json'
-                    },
-                    body : JSON.stringify(newUser)
-                })
-            }
+            const pro = members.map((user) => {
+                return lendOwe(user, group, newGrp)
+            })
+            await Promise.all(pro)
             
         }
 
@@ -1012,8 +1020,7 @@ const GrpSetting = () => {
                                     </div>
 
                                 </div>
-
-                                {Object.keys(group.dues).length ? Object.entries(group.dues[user.fullName]).map(([name, amount]) => {
+                                {group.dues[user.fullName]===!undefined ? Object.entries(group.dues[user.fullName]).map(([name, amount]) => {
                                     if(!name || amount === 0) return
                                     return (
                                         <div
