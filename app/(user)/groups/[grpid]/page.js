@@ -413,6 +413,7 @@ const GrpSetting = () => {
     if(expensePopUp) {
         return (
             <>
+            {/* Laptop UI */}
             <div 
             className="h-full w-full not-md:hidden flex flex-col p-2 items-center justify-center">
 
@@ -675,6 +676,275 @@ const GrpSetting = () => {
                         <button
                         onClick={addExpense}
                         className='bg-[#2C9986] w-8/10 p-3 font-bold text-white rounded-2xl hover:bg-[#1e7f6f] cursor-pointer mt-5'>
+                            Save Expense
+                        </button>
+                    </div>
+
+                </div>
+
+            {/* Mobile UI */}
+            <div 
+            className="h-full w-full md:hidden flex flex-col p-2 items-center justify-center">
+
+                    {/* Top heading */}
+                    <div 
+                    className='flex border-b border-[#dddddd] p-5 bg-white rounded-2xl rounded-b-none w-full'>
+                        <div
+                        className='flex flex-col gap-3 flex-1'>
+                            <span
+                        className='text-2xl font-bold'>
+                            Add an Expense
+                        </span>
+                        <span
+                        className='text-sm text-[#68827E]'>
+                            Record a new shared transaction and update your trust score
+                        </span>
+                        </div>
+                        <img
+                        onClick={() => {setExpensePopUp(false)}} 
+                        src="/close.svg" alt=""  
+                        className='w-8 cursor-pointer'/>
+                    </div>
+
+                   
+
+                    {/* Middle Section */}
+                    <div
+                    className='bg-white w-full flex flex-col items-center'>
+
+                        {/* Text Total Amount */}
+                        <span
+                        className='text-sm text-[#68827E] mt-8 font-bold'>
+                            TOTAL AMOUNT
+                        </span>
+
+                        {/* Money */}
+                        <div
+                        className='flex items-center justify-center mt-5'>
+
+                            {/* Rupee Icon */}
+                            <img src="/rupee.svg" alt="" className='w-8'/>
+
+                            {/* Money Input */}
+                            <input 
+                            type="number"
+                            id="total money"
+                            placeholder='0.00'
+                            min='0'
+                            className='text-5xl w-8/10 text-center font-bold placeholder:text-black foucs: outline-none' />
+                        </div>
+
+                        {/* What is it for */}
+                        <span
+                        className='w-9/10 text-sm mt-5'>
+                            What is it for?
+                        </span>
+
+                        {/* Title Input */}
+                        <input
+                        id='title' 
+                        type="text"
+                        placeholder='eg. Dinner at Burger King'
+                        className='w-9/10 py-2 px-4 rounded-xl focus:outline-none border border-[#dddddd] focus:border-[#9b9b9b] my-2' />
+                        
+
+                    </div>
+
+                    {/* Paid By Who Section */}
+                    <div
+                    className='w-full bg-white flex flex-col items-center justify-center'>
+
+                        {/* Paid by Who Text */}
+                        <span
+                        className='text-sm w-9/10 mt-10'>
+                            Paid by who?
+                        </span>
+
+                        <button
+                        onBlur={()=>{setDrop(false)}}
+                        onClick={()=>{setDrop(!drop)}}
+                        className={`w-9/10 flex flex-col relative p-2 rounded-xl mt-2 ${drop ? "" : "text-xl font-bold underline underline-offset-6 decoration-[#2C9986]"} `}>
+                            <span className={`${drop ? "text-[#2C9886] font-bold" : ""}`}>{paid}</span>
+
+                        {drop && <div
+                        className='flex flex-col absolute left-1/2 top-8.25 -translate-x-1/2 w-full bg-white border border-[#dddddd] p-2 rounded-xl mt-2'>
+                            {members.map( (user) => {
+                                return (
+                                    <span
+                                    key={user.uid}
+                                    onClick={()=>{handleDrop(user.fullName)}}
+                                    className='flex items-center justify-center gap-3'>
+                                        <img src="/person.svg" alt="" />
+                                        {user.fullName}
+                                    </span>
+                                )
+                            } )}
+                        </div>  }           
+                        
+                        </button>
+
+                    </div>
+
+
+                    {/* Money Division Section */}
+                    <div
+                    className='bg-white w-full flex flex-col items-center border-b border-[#dddddd]'>
+
+                        {/* Text Split Options */}
+                        <span
+                        className='w-9/10 font-bold my-5 mt-10'>
+                            Split Options
+                        </span>
+
+                        {/* Option Selector buttons */}
+                        <div
+                        className='flex w-full border border-[#dddddd] rounded-full bg-[#F6F8F6] p-1'>
+
+                            {/* Equally */}
+                            <button
+                            onClick={() => {setEqually(true); setExact(false); setRatio(false)}}
+                            className={`${equally ? "bg-[#2C9986] text-white" : ""} py-1.5 px-4 rounded-full flex-1 cursor-pointer`}>
+                                Equally
+                            </button>
+
+                            {/* Exact Amounts */}
+                            <button
+                            onClick={() => {setEqually(false); setExact(true); setRatio(false)}}
+                            className={`${exact ? "bg-[#2C9986] text-white" : ""} py-1.5 px-4 rounded-full flex-1.5 cursor-pointer`}>
+                                Exact Amounts
+                            </button>
+
+                            {/* Ratio */}
+                            <button
+                            onClick={() => {setEqually(false); setExact(false); setRatio(true)}}
+                            className={`${ratio ? "bg-[#2C9986] text-white" : ""} py-1.5 px-4 rounded-full flex-1 cursor-pointer`}>
+                                Ratio
+                            </button>
+                        </div>
+
+                        {/* Equally */}
+                        <div 
+                        className={`${equally ? "" : "hidden"} w-full my-5 px-2 flex flex-col gap-5`}>
+
+                            {/* Displaying Users */}
+                            { members.map ( (user) => {
+                                return (
+                                    <div
+                                    onClick={() => {document.getElementById(`${user.uid} checkbox equally`).checked = !document.getElementById(`${user.uid} checkbox equally`).checked}}
+                                    key={`${user.uid} container equally`}
+                                    className='bg-white w-full p-3 border border-[#dddddd] flex gap-5 rounded-xl'>
+
+                                        {/* Icon */}
+                                        <img 
+                                        key={`${user.uid} icon equally`}
+                                        src="/person.svg" 
+                                        className='w-5' />
+                                        
+                                        {/* Full Name */}
+                                        <span
+                                        key={`${user.uid} full name equally`}
+                                        className='full font-bold flex-1'>
+                                            {user.fullName}
+                                        </span>
+
+                                        {/* Checkbox */}
+                                        <input 
+                                        key={`${user.uid} checkbox equally`}
+                                        id={`${user.uid} checkbox equally`}
+                                        type="checkbox" 
+                                        className='w-4 accent-[#2C9986] rounded-full'/>
+                                    </div>
+                                )
+                            })}
+                        </div>
+
+                        {/* Exact Amounts */}
+                        <div 
+                        className={`${exact ? "" : "hidden"} w-full my-5 px-2 flex flex-col gap-5`}>
+
+                            {/* Displaying Users */}
+                            { members.map ( (user) => {
+                                return (
+                                    <div
+                                    key={`${user.uid} container`}
+                                    className='bg-white w-full p-3 border border-[#dddddd] flex gap-5 rounded-xl items-center'>
+
+                                        {/* Icon */}
+                                        <img 
+                                        key={`${user.uid} icon`}
+                                        src="/person.svg" 
+                                        className='w-5' />
+                                        
+                                        {/* Full Name */}
+                                        <span
+                                        key={`${user.uid} full name`}
+                                        className='full font-bold flex-1'>
+                                            {user.fullName}
+                                        </span>
+
+                                        {/* Rupee Icon */}
+                                        <img src="/rupee.svg" alt="" className='w-5' />
+
+                                        {/* Number Input */}
+                                        <input 
+                                        key={`${user.uid} checkbox`}
+                                        id={`${user.uid} checkbox exact`}
+                                        type="number" 
+                                        defaultValue='0'
+                                        placeholder='0.00'
+                                        min='0'
+                                        className='w-20 px-2 pt-1 pb-0.5 border-b-2 border-[#2C9986] focus:outline-none font-bold text-[#2C9986] placeholder:text-[#2C9986] placeholder:font-bold text-center'/>
+                                    </div>
+                                )
+                            })}
+                        </div>
+
+                        {/* Ratio */}
+                        <div 
+                        className={`${ratio ? "" : "hidden"} w-full my-5 px-2 flex flex-col gap-5`}>
+
+                            {/* Displaying Users */}
+                            { members.map ( (user) => {
+                                return (
+                                    <div
+                                    key={`${user.uid} container`}
+                                    className='bg-white w-full p-3 border border-[#dddddd] flex gap-5 rounded-xl items-center'>
+
+                                        {/* Icon */}
+                                        <img 
+                                        key={`${user.uid} icon`}
+                                        src="/person.svg" 
+                                        className='w-5' />
+                                        
+                                        {/* Full Name */}
+                                        <span
+                                        key={`${user.uid} full name`}
+                                        className='full font-bold flex-1'>
+                                            {user.fullName}
+                                        </span>
+
+                                        {/* Number Input */}
+                                        <input 
+                                        key={`${user.uid} checkbox`}
+                                        id={`${user.uid} checkbox ratio`}
+                                        type="number" 
+                                        defaultValue='1'
+                                        placeholder='1'
+                                        min='0'
+                                        className='w-15 px-2 pt-1 pb-0.5 border-b-2 border-[#2C9986] focus:outline-none font-bold text-[#2C9986] placeholder:text-[#2C9986] placeholder:font-bold text-center'/>
+                                    </div>
+                                )
+                            })}
+                        </div>
+                        <div className='mb-10'></div>
+                    </div>
+
+                    {/* Save Section */}
+                    <div
+                    className='rounded-2xl rounded-t-none bg-white w-full flex items-center justify-center p-3'>
+                        <button
+                        onClick={addExpense}
+                        className='bg-[#2C9986] w-full p-3 font-bold text-white rounded-2xl hover:bg-[#1e7f6f] cursor-pointer mt-5'>
                             Save Expense
                         </button>
                     </div>
