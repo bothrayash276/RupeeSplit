@@ -1228,6 +1228,389 @@ const GrpSetting = () => {
         </div>
 
     </div>
+
+    {/* Mobile UI */}
+    <div 
+    className="h-full w-full md:hidden p-2 flex flex-col items-center justify-center">
+
+        {/* Group Details */}
+        <div 
+        className="bg-white w-full flex flex-col gap-5 px-5 py-10 rounded-3xl shadow mt-10">
+
+            {/* Group Name and Amount Owed */}
+            <div
+            className='flex flex-col flex-1 gap-3'>
+
+                {/* Group Name */}
+                <span
+                className='text-3xl font-bold'>
+                    {group.groupName}
+                </span>
+                
+                {/* Your Balance */}
+                <div
+                className='flex gap-2 text-[#68827E]'>
+
+                    <div
+                    className='flex gap-2 w-full'>
+                        {/* Image */}
+                    <img src="/pie.gif" alt="" className='w-6 h-6' />
+
+                    {/* Text */}
+                    Your share in total balance:
+                    </div>
+
+                    {/* Your Balance */}
+                   {due(operator.fullName, group.dues) < 0 ? <span
+                    className='text-red-500 font-bold'>&#x20B9;{-due(operator.fullName, group.dues)}
+                    </span> : ""}
+
+                    {due(operator.fullName, group.dues) > 0 ? <span
+                    className='text-[#2C9986] font-bold'>&#x20B9; {due(operator.fullName, group.dues)}
+                    </span> : ""}
+
+                    {due(operator.fullName, group.dues) ===0 ? <span
+                    className='text-[#68827E] font-bold italic'>Settled up
+                    </span> : ""}
+                    
+                </div>
+            </div>
+            
+            {/* Buttons */}
+            <div
+            className='flex gap-3'>
+                {/* Add Expense Button */}
+            <button
+            onClick={() => setExpensePopUp(true)}
+            className='flex items-center justify-center gap-3 bg-[#2C9986] px-3 rounded-full h-12 text-white shadow-lg cursor-pointer'>
+                <img src="/add.svg" alt="" className='w-6' />
+                Add Expense
+            </button>
+
+            {/* Settle Up Button */}
+            <button
+            onClick={() => {setSettleup(true)}}
+            className='flex items-center justify-center gap-3 bg-[#F1F4F3] px-3 rounded-full h-12'>
+                <img src="/settle.svg" alt="" className='w-6' />
+                Settle Up
+            </button>
+            </div>
+        </div>
+
+        {/* Navbar */}
+        <div
+        className='w-9/10 justify-between border-b border-[#dddddd] p-2 flex gap-2 my-10'>
+
+            {/* Transaction History Button Button */}
+            <button
+            onClick={()=>{setTransacTab(true); setBalanceTab(false); setSettingsTab(false)}}
+            className={`${transacTab ? "text-[#2C9986] bg-[#D4EBE7]" : "text-[#68827E]"} font-bold cursor-pointer p-2 rounded-xl`}>
+                Transactions
+            </button>
+
+            {/* Balances Button */}
+            <button
+            onClick={()=>{setTransacTab(false); setBalanceTab(true); setSettingsTab(false)}}
+            className={`${balanceTab ? "text-[#2C9986] bg-[#D4EBE7]" : "text-[#68827E]"} font-bold cursor-pointer p-2 rounded-xl`}>
+                Balances
+            </button>
+
+            {/* Settings Button */}
+            <button
+            onClick={()=>{setTransacTab(false); setBalanceTab(false); setSettingsTab(true)}}
+            className={`${settingsTab ? "text-[#2C9986] bg-[#D4EBE7]" : "text-[#68827E]"} font-bold cursor-pointer p-2 rounded-xl`}>
+                Settings
+            </button>
+
+        </div>
+
+        {/* Transaction Tab */}
+        <div 
+        className={`${transacTab ? "" : "hidden"} w-8/10`}>
+
+            {/* Displaying Previous Transaction */}
+            <div
+            className='w-full flex flex-col gap-10'>            
+                {/* Recent Activity Heading */}
+                <div
+                className='flex gap-3 items-center'>
+
+                    {/* Recent Arrow Image */}
+                    <img src="/recent.gif" alt="" className='w-8' />
+
+                    {/* Recent Text */}
+                    <span
+                    className='text-xl font-bold'>
+                        Recent Activity
+                    </span>
+                </div>
+                {/* Function to Show all the transactions */}
+                {
+                    [...group.transactions].reverse().map( pay => {
+                        return (
+                            <div
+                            key={`${group.id} ${pay.id} 1`}
+                            className='bg-white flex gap-3 items-center p-3 rounded-xl'>
+
+                                {/* Title */}
+                                <div
+                                key={`${group.id} ${pay.title} 2`}
+                                className='flex flex-col flex-1 gap-1'>
+                                    <span
+                                    key={`${group.id} ${pay.id} 3`}
+                                    className='font-bold text-xl'>
+                                        {pay.title}
+                                    </span>
+
+                                    <span
+                                    key={`${group.id} ${pay.id} 4`}
+                                    className='text-[#68827E] text-sm font-bold'>
+                                        {pay["Paid by"]} paid &#x20B9; {pay.amount} for {arrToStr(pay["Split between"])} 
+                                    </span>
+
+                                    {/* Date */}
+                                    <span
+                                    key={`${group.id} ${pay.id} date`}
+                                    className='text-sm font-bold text-[#68827E]'>
+                                        DATE : {pay.time}
+                                    </span>
+                                </div>
+                                
+                                {/* Money */}
+                                <span
+                                key={`${group.id} ${pay.id} 5`}
+                                className='flex gap-1 items-center text-[#68827E] font-bold'>
+                                    <span
+                                    key={`${group.id} ${pay.id} 6`}
+                                    className='text-xl font-bold text-[#2C9986]'>
+                                        &#x20B9; {pay.division} 
+                                    </span>
+                                    per head
+                                </span>
+
+                            </div>
+                        )
+                    })
+                }
+
+            </div>
+
+        </div>
+
+        {/* Balance Tab */}
+        <div
+        className={`${balanceTab ? "" : "hidden"} w-full`}>
+            
+            {/* Displaying Group Members */}
+            <div
+            className='w-full flex flex-col gap-8'>
+
+                {/* Icon and Title */}
+                <div
+                className='flex items-center gap-3'>
+                    <img src="/balance.gif" alt="" className='w-7 ' />
+                    <span
+                    className='font-bold text-xl'>
+                        Account Balances
+                    </span>
+                </div>
+
+                    { 
+                        members.map ( (user) => {
+                            return (
+                                <div
+                                key={`${user.uid} mega container`}
+                                className='p-3 flex flex-col gap-2 bg-white rounded-xl w-full'>
+
+                                <div
+                                key={`${user.uid} container`}
+                                className='p-2 flex items-center gap-2'>
+                                    
+                                    {/* Image */}
+                                    <img
+                                    key={`${user.uid} pfp image`}
+                                     src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTyyCG3jGw_PZPj17ttBPAPxdgPdpLO020L9g&s" alt=""
+                                    className='w-12 h-12 rounded-full' />
+
+                                    {/* User Details */}
+                                    <div
+                                    key={`${user.uid} user details`}
+                                    className='flex flex-col flex-1 gap-0.5'>
+
+                                        {/* User Name */}
+                                        <span
+                                        key={`${user.uid} user name`}
+                                        className='font-bold text-xl'>
+                                            {user.fullName}
+                                        </span>
+
+                                        {/* Trust Score */}
+                                        <span
+                                        key={`${user.uid} user score`}
+                                        className='font-bold text-[#2C9986] text-sm text-center bg-[#D4EBE7] w-32 rounded-full'>
+                                            TRUST: {user.score}
+                                        </span>
+                                    </div>
+
+                                </div>
+                                {group.dues[user.fullName] !== undefined ? Object.entries(group.dues[user.fullName]).map(([name, amount]) => {
+                                    if(!name || amount === 0) return
+                                    return (
+                                        <div
+                                        key={`${user.uid} payee`}
+                                        className='ml-15 flex'>
+                                            <span
+                                            key={`${user.uid} payee name`}
+                                            className='font-bold flex-1'>
+                                               {name}
+                                            </span>
+                                            <span
+                                            key={`${user.uid} owe print`}
+                                            className={`${amount < 0 ? "" : "hidden"} text-red-500 font-bold `}>
+                                                You owe &#8377; {-amount}
+                                            </span>
+                                            <span
+                                            key={`${user.uid} lend   print`}
+                                            className={`${amount > 0 ? "" : "hidden"} text-[#2C9986] font-bold `}>
+                                                You are owed &#8377; {amount}
+                                            </span>
+                                        </div>
+                                    )
+                                })
+                                 : ""}
+
+                                </div>
+
+                            )
+                        })
+                    }
+                
+
+            </div>
+        </div>
+
+        {/* Settings Tab */}
+        <div
+        className={`${settingsTab ? "" : "hidden"} w-full p-1`}>
+            
+            {/* Displaying Group Members */}
+            <div
+            className='w-full flex flex-col gap-3'>
+
+                <div
+                className='flex items-center justify-between w-full mb-10'>
+                    
+                    {/* Add Friend */}
+                    <div
+                    onClick={()=>{setInviteFriend(true)}}
+                    className='flex items-center p-3 gap-2 bg-[#D4EBE7] rounded-2xl text-[#2C9986] cursor-pointer'>
+                        <img src="/addFriend_active.svg" alt="" className='w-6'/>
+                        Invite a Friend
+                    </div>
+
+                    {/* Leave Group */}
+                    <div
+                    onClick={()=>{handleExit(operator.uid, group.id); setDeleting(true)}}
+                    className='flex items-center p-3 gap-2 bg-red-500 rounded-2xl text-white cursor-pointer'>
+                        <img src="/exit.svg" alt="" className='w-6'/>
+                        Leave Group
+                    </div>
+                </div>
+
+                {/* Icon and Title */}
+                <div
+                className='flex items-center gap-3'>
+                    <img src="/group_active.svg" alt="" className='w-7 ' />
+                    <span
+                    className='font-bold text-xl'>
+                        Group Members
+                    </span>
+                </div>
+
+                    {
+                        members.map ( (user) => {
+                            const balance = due(user.fullName, group.dues)
+                            return (
+                                <div
+                                key={`${user.uid} container`}
+                                className='p-2 flex items-center gap-2'>
+                                    
+                                    {/* Image */}
+                                    <img
+                                    key={`${user.uid} pfp image`}
+                                     src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTyyCG3jGw_PZPj17ttBPAPxdgPdpLO020L9g&s" alt=""
+                                    className='w-12 h-12 rounded-full' />
+
+                                    {/* User Details */}
+                                    <div
+                                    key={`${user.uid} user details`}
+                                    className='flex flex-col flex-1 gap-0.5'>
+
+                                        {/* User Name */}
+                                        <span
+                                        key={`${user.uid} user name`}
+                                        className='font-bold'>
+                                            {user.fullName}
+                                        </span>
+
+                                        {/* Trust Score */}
+                                        <span
+                                        key={`${user.uid} user score`}
+                                        className='font-bold text-[#2C9986] text-sm text-center bg-[#D4EBE7] w-32 rounded-full'>
+                                            TRUST: {user.score}
+                                        </span>
+                                    </div>
+
+                                    {/* User Balance */}
+                                    <div
+                                    key={`${user.uid} user balance container`}
+                                    className='flex flex-col flex-1 gap-0.5 items-center'>
+
+                                        {/* Balance Text */}
+                                        <span
+                                        key={`${user.uid} title balance`}
+                                        className='font-bold text-[#68827E] text-sm'>
+                                            BALANCE
+                                        </span>
+
+                                        {/* Balance */}
+                                        {/* settled up */}
+                                        <span
+                                        key={`${user.uid} settleup`}
+                                        className={`${balance === 0 ? "" : "hidden"} italic font-bold text-[#68827E]`}>
+                                            Settled Up
+                                        </span>
+
+                                        {/* you owe */}
+                                        <span
+                                        
+                                        key={`${user.uid} owe`}
+                                        className={`${balance < 0 ? "" : "hidden"} italic font-bold text-red-500`}>
+                                            You owe &#8377; {-balance}
+                                        </span>
+
+                                        {/* you are owed */}
+                                        <span
+                                        
+                                        key={`${user.uid} owed`}
+                                        className={`${balance > 0 ? "" : "hidden"} italic font-bold text-[#2C9986]`}>
+                                            You are owed &#8377; {balance}
+                                        </span>
+
+
+                                    </div>
+
+                                </div>
+
+                            )
+                        })
+                    }
+                
+
+            </div>
+        </div>
+
+    </div>
     </>
   )
 }

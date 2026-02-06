@@ -66,7 +66,7 @@ const Header = () => {
               <li>
           <Link
             href={"/dashboard"}
-            className={`${path == "/dashboard" ? "text-[#279B88] font-bold bg-[#D4EBE7]" : "text-[#67837F]"} flex gap-2 items-center justify-center py-2 px-4 rounded-full`}
+            className={`${path == "/dashboard" ? "text-[#279B88] font-bold bg-[#D4EBE7]" : "text-[#67837F]"} flex gap-2 items-center py-2 px-4 rounded-full`}
           >
             <img
               src={
@@ -84,7 +84,7 @@ const Header = () => {
               <li>
           <Link
             href={"/groups"}
-            className={`${path == "/groups" ? "text-[#279B88] font-bold bg-[#D4EBE7]" : "text-[#67837F]"} flex gap-2 items-center justify-center py-2 px-4 rounded-full`}
+            className={`${path == "/groups" ? "text-[#279B88] font-bold bg-[#D4EBE7]" : "text-[#67837F]"} flex gap-2 items-center py-2 px-4 rounded-full`}
           >
             <img
               src={
@@ -102,7 +102,7 @@ const Header = () => {
               <li>
           <Link
             href={"/friends"}
-            className={`${path == "/friends" ? "text-[#279B88] font-bold bg-[#D4EBE7]" : "text-[#67837F]"} flex gap-2 items-center justify-center py-2 px-4 rounded-full`}
+            className={`${path == "/friends" ? "text-[#279B88] font-bold bg-[#D4EBE7]" : "text-[#67837F]"} flex gap-2 items-center py-2 px-4 rounded-full`}
           >
             <img
               src={
@@ -120,7 +120,7 @@ const Header = () => {
               <li>
           <Link
             href={"/settings"}
-            className={`${path == "/settings" ? "text-[#279B88] font-bold bg-[#D4EBE7]" : "text-[#67837F]"} flex gap-2 items-center justify-center py-2 px-4 rounded-full`}
+            className={`${path == "/settings" ? "text-[#279B88] font-bold bg-[#D4EBE7]" : "text-[#67837F]"} flex gap-2 items-center py-2 px-4 rounded-full`}
           >
             <img
               src={
