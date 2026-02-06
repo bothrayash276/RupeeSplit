@@ -1175,7 +1175,15 @@ const GrpSetting = () => {
         return (
             <>
             <div
-            className='flex flex-col h-full w-full p-7'>
+            className='w-full flex justify-end px-2 py-1 gap-3 mb-6'>
+                <img src="/addFriend_active.svg" alt="" className='w-6' />
+                <span
+                className='flex-1 text-xl font-bold'>Invite a Friend</span>
+                <img onClick={()=>{setInviteFriend(false)}} src="/close.svg" alt="" className='w-8'/>
+            </div>
+            {/* Laptop UI */}
+            <div
+            className='flex flex-col h-full w-full p-7 not-md:hidden'>
                 {
                         displayInvite.map ( (user) => {
                             return (
@@ -1213,6 +1221,55 @@ const GrpSetting = () => {
                                     <button
                                     onClick={()=>{invite(user.uid)}}
                                     className='w-1/10 p-2 bg-[#D4EBE7] text-[#2C9986] font-bold rounded-full'>
+                                        Invite
+                                    </button>
+                                </div>
+
+                            )
+                        })
+                    }
+            </div>
+
+            {/* Mobile UI */}
+            <div
+            className='flex flex-col h-full w-full md:hidden'>
+                {
+                        displayInvite.map ( (user) => {
+                            return (
+                                <div
+                                key={`${user.uid} container`}
+                                className='p-2 flex items-center gap-2'>
+                                    
+                                    {/* Image */}
+                                    <img
+                                    key={`${user.uid} pfp image`}
+                                     src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTyyCG3jGw_PZPj17ttBPAPxdgPdpLO020L9g&s" alt=""
+                                    className='w-12 h-12 rounded-full' />
+
+                                    {/* User Details */}
+                                    <div
+                                    key={`${user.uid} user details`}
+                                    className='flex flex-col flex-1 gap-0.5'>
+
+                                        {/* User Name */}
+                                        <span
+                                        key={`${user.uid} user name`}
+                                        className='font-bold'>
+                                            {user.fullName}
+                                        </span>
+
+                                        {/* Trust Score */}
+                                        <span
+                                        key={`${user.uid} user score`}
+                                        className='font-bold text-[#2C9986] text-sm text-center bg-[#D4EBE7] w-32 rounded-full'>
+                                            TRUST: {user.score}
+                                        </span>
+                                    </div>
+
+                                    {/* Invite Button */}
+                                    <button
+                                    onClick={()=>{invite(user.uid)}}
+                                    className='p-2 px-3 bg-[#D4EBE7] text-[#2C9986] font-bold rounded-full'>
                                         Invite
                                     </button>
                                 </div>
