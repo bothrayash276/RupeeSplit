@@ -1057,7 +1057,7 @@ const GrpSetting = () => {
                                         {/* User Name */}
                                         <span
                                         key={`${user.uid} user name`}
-                                        className='font-bold'>
+                                        className='font-bold text-xl'>
                                             {user.fullName}
                                         </span>
 
@@ -1078,17 +1078,17 @@ const GrpSetting = () => {
                                         className='ml-25 flex'>
                                             <span
                                             key={`${user.uid} payee name`}
-                                            className='font-bold text-xl flex-1'>
-                                                {name}
+                                            className='font-bold flex-1'>
+                                               {name}
                                             </span>
                                             <span
                                             key={`${user.uid} owe print`}
-                                            className={`${amount < 0 ? "" : "hidden"} text-red-500 font-bold text-xl`}>
+                                            className={`${amount < 0 ? "" : "hidden"} text-red-500 font-bold `}>
                                                 You owe &#8377; {-amount}
                                             </span>
                                             <span
                                             key={`${user.uid} lend   print`}
-                                            className={`${amount > 0 ? "" : "hidden"} text-[#2C9986] font-bold text-xl`}>
+                                            className={`${amount > 0 ? "" : "hidden"} text-[#2C9986] font-bold `}>
                                                 You are owed &#8377; {amount}
                                             </span>
                                         </div>
