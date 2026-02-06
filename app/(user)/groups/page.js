@@ -6,6 +6,7 @@ import serverData_User from '@/app/_data'
 import { useSession } from 'next-auth/react'
 import Link from 'next/link'
 import PageLoading from '@/app/Loading'
+import { redirect, RedirectType } from 'next/navigation'
 // import dotenv from 'dotenv'
 // dotenv.config()
 
@@ -51,6 +52,9 @@ const Groups = () => {
           if(group)
             setLoading(false)
         }
+      }
+      else if (status==='unauthenticated'){
+        redirect('/login', RedirectType.replace)
       }
     }
     load()

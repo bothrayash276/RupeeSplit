@@ -2,6 +2,7 @@
 import serverData_User from "@/app/_data";
 import PageLoading from "@/app/Loading";
 import { useSession } from "next-auth/react";
+import { redirect, RedirectType } from "next/navigation";
 import React from "react";
 import { useState, useEffect } from "react";
 
@@ -31,6 +32,9 @@ const Settings = () => {
           // After data is loaded from backend, then turn off loading screen
           setLoading(false);
         }
+      }
+      else if (status === 'unauthenticated'){
+        redirect('/login', RedirectType.replace)
       }
     };
 

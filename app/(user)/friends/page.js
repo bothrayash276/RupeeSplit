@@ -2,6 +2,7 @@
 import serverData_User from "@/app/_data";
 import PageLoading from "@/app/Loading";
 import { useSession } from "next-auth/react";
+import { redirect, RedirectType } from "next/navigation";
 import React, { useEffect, useState } from "react";
 
 const Friends = () => {
@@ -80,6 +81,9 @@ const Friends = () => {
         finally {
           setLoading(false)
         }
+      }
+      else if(status==='unauthenticated'){
+        redirect('/login', RedirectType.replace)
       }
     }
     load()
