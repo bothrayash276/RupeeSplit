@@ -110,8 +110,9 @@ const GrpSetting = () => {
     } , [group, status, expensePopUp, settleup])
 
     // Lend Owe Updating Function
-    const lendOwe = async (op, group, newGrp) => {
+    const lendOwe = async (op, group, newGrp, userScore) => {
         const balance = due(op.fullName, newGrp.dues)
+        if(op.uid !== operator.uid) userScore = op.score 
             const oldBalance = due(op.fullName, group.dues)
             if(balance > 0) {
                 const {_id, ...vari} = op
@@ -120,13 +121,15 @@ const GrpSetting = () => {
                 newUser = {
                 ...vari,
                 "lend" : op.lend,
-                "owe" : op.owe - oldBalance   
+                "owe" : op.owe - oldBalance,
+                "score" : userScore
                 }
             }
                 else {
                 newUser = {
                     ...vari,
-                    "lend" : op.lend - oldBalance + balance,   
+                    "lend" : op.lend - oldBalance + balance, 
+                    "score" : userScore  
                 }   
                 }
                 if(operator.uid === op.uid) setOperator(newUser)
@@ -146,13 +149,15 @@ const GrpSetting = () => {
                     newUser = {
                     ...vari,
                     "lend" : op.lend - oldBalance,
-                    "owe" : op.owe + balance
+                    "owe" : op.owe + balance,
+                    "score" : userScore
                     }
                 }
                 else {
                     newUser = {
                     ...vari,
-                    "owe" : op.owe + balance
+                    "owe" : op.owe + balance,
+                    "score" : userScore
                 }
                 }
                 if(operator.uid === op.uid) setOperator(newUser)
@@ -172,13 +177,15 @@ const GrpSetting = () => {
                 if(oldBalance > 0) {
                     newUser = {
                     ...vari,
-                    "lend" : op.lend - oldBalance
+                    "lend" : op.lend - oldBalance,
+                    "score" : userScore
                     }
                 }
                 else {
                     newUser = {
                     ...vari,
-                    "owe" : op.owe - oldBalance
+                    "owe" : op.owe - oldBalance,
+                    "score" : userScore
                 }
                 }
                 if(operator.uid === op.uid) setOperator(newUser)
@@ -241,7 +248,7 @@ const GrpSetting = () => {
 
             // Updating user database
             const pro = members.map((user) => {
-                return lendOwe(user, group, newGrp)
+                return lendOwe(user, group, newGrp, operator.score)
             })
             await Promise.all(pro)
             
@@ -280,11 +287,6 @@ const GrpSetting = () => {
         await updateGroup(newGrp)
         setGroup(newGrp)
 
-        // Score Calculation
-        let gap = moment(obj.time, 'DD-MM-YYYY').diff(moment(group.transactions.reverse()[0].time, 'DD-MM-YYYY'), 'days')
-        gap = Number(gap)
-        if(!gap) gap++
-        const high = 0.1; const mid = 0.07; const low = 0.05;
 
         // Getting New Score
         let newScore
@@ -293,55 +295,61 @@ const GrpSetting = () => {
         else if (group.dues[operator.fullName][repaid] >= 0) newScore = operator.score
         else {
             const gap = moment(obj.time, 'DD-MM-YY').diff(moment([...group.transactions].reverse()[0].time, 'DD-MM-YYYY'), 'days')
-            if(gap <= 2 ) newScore = operator.score + 0.05
+            if(gap <= 2 ) newScore = operator.score + 0.1
             else if(gap <= 4 && gap > 2 ) newScore = operator.score + 0.07
-            else if(gap <= 7 && gap > 4 ) newScore = operator.score + 0.1
+            else if(gap <= 7 && gap > 4 ) newScore = operator.score + 0.05
             else if(gap > 7 && gap <= 14) newScore = operator.score + (0.02 * (gap-7))
             else if(gap > 14 && gap <= 21) newScore = operator.score + (0.15 * (gap-14))
             else if(gap > 21) newScore = operator.score + (1.1 * (gap-21))
         }
-        newScore = Number(newScore).toFixed(2)
+        newScore = Number(newScore.toFixed(2))
         console.log(newScore)
 
         // Updating user database
-        if(-operator.owe >= totalMoney ){
-            const money = Number(operator.owe) + Number(totalMoney)
-            const {_id, ...vari} = operator
-            const newUser = {
-                ...vari,
-                "score" : newScore,
-                "owe" : Number(money)
-            }
-            setOperator(newUser)
-            const updateUrl = `${process.env.NEXT_PUBLIC_MONGO_URI}/update`
-            await fetch(updateUrl, {
-                method : 'POST',
-                headers : {
-                    'Content-Type' : 'application/json'
-                },
-                body : JSON.stringify(newUser)
-            }) 
-        }
-        else {
-            const excess = due(operator.fullName, group.dues)
-            const money = Number(operator.owe) + Number(totalMoney)
-            const {_id, ...vari} = operator
-            const newUser = {
-                ...vari,
-                "score" : newScore,
-                "owe" : Number(operator.owe) - Number(excess),
-                "lend" : Number(operator.lend) + Number(money)
-            }
-            setOperator(newUser)
-            const updateUrl = `${process.env.NEXT_PUBLIC_MONGO_URI}/update`
-            await fetch(updateUrl, {
-                method : 'POST',
-                headers : {
-                    'Content-Type' : 'application/json'
-                },
-                body : JSON.stringify(newUser)
-            }) 
-        }   
+        // if(-operator.owe >= totalMoney ){
+        //     const money = Number(operator.owe) + Number(totalMoney)
+        //     const {_id, ...vari} = operator
+        //     const newUser = {
+        //         ...vari,
+        //         "score" : newScore,
+        //         "owe" : Number(money)
+        //     }
+        //     setOperator(newUser)
+        //     const updateUrl = `${process.env.NEXT_PUBLIC_MONGO_URI}/update`
+        //     await fetch(updateUrl, {
+        //         method : 'POST',
+        //         headers : {
+        //             'Content-Type' : 'application/json'
+        //         },
+        //         body : JSON.stringify(newUser)
+        //     }) 
+        // }
+        // else {
+        //     const excess = due(operator.fullName, group.dues)
+        //     const money = Number(operator.owe) + Number(totalMoney)
+        //     const {_id, ...vari} = operator
+        //     const newUser = {
+        //         ...vari,
+        //         "score" : newScore,
+        //         "owe" : Number(operator.owe) - Number(excess),
+        //         "lend" : Number(operator.lend) + Number(money)
+        //     }
+        //     setOperator(newUser)
+        //     const updateUrl = `${process.env.NEXT_PUBLIC_MONGO_URI}/update`
+        //     await fetch(updateUrl, {
+        //         method : 'POST',
+        //         headers : {
+        //             'Content-Type' : 'application/json'
+        //         },
+        //         body : JSON.stringify(newUser)
+        //     }) 
+        // } 
+
+        // Updating user database
+        const pro = members.map((user) => {
+            return lendOwe(user, group, newGrp, newScore)
+        })
+        await Promise.all(pro)
 
         setSettleup(false)
         setLoading(true)
@@ -838,6 +846,7 @@ const GrpSetting = () => {
                         })
                     }
             </div>
+            
             </>
         )
     }
