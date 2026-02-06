@@ -120,7 +120,7 @@ const GrpSetting = () => {
                 if(oldBalance < 0) {
                 newUser = {
                 ...vari,
-                "lend" : op.lend,
+                "lend" : op.lend + balance,
                 "owe" : op.owe - oldBalance,
                 "score" : userScore
                 }
@@ -156,7 +156,7 @@ const GrpSetting = () => {
                 else {
                     newUser = {
                     ...vari,
-                    "owe" : op.owe + balance,
+                    "owe" : op.owe - oldBalance + balance,
                     "score" : userScore
                 }
                 }
