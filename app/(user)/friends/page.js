@@ -31,6 +31,7 @@ const Friends = () => {
     if (!userUID) userUID = document.getElementById("uidSearchBoxMobile").value;
     if(!userUID) {
       setEmptyInbox(true)
+      setFetched(false)
       setTimeout(() => {
         setEmptyInbox(false)
       }, 1000);
@@ -210,8 +211,10 @@ const Friends = () => {
       </div>
 
       {/* Mobile UI */}
-      <div className="md:hidden flex flex-col h-full w-full items-center justify-center">
+      <div className="md:hidden flex flex-col gap-10 h-full w-full items-center justify-center">
         {/* Search Bar */}
+       <div
+       className="w-full flex flex-col items-center">
         <div className="w-9/10 flex gap-2 border border-gray-200 bg-gray-200 rounded-lg mt-10 py-2 px-3">
           <img src="/search.gif" alt="" className="w-8" />
           <input
@@ -248,6 +251,44 @@ const Friends = () => {
           >
             Add Friend
           </span>
+        </div></div> 
+
+        {/* Displaying Friends */}
+        <div
+        className="w-9/10 p-3 rounded-xl flex flex-col gap-3">
+          
+          {/* Title and Icon */}
+          <div
+          className="flex gap-3 text-xl font-bold">
+            <img src="/friends.svg" alt="" className="w-6"/>
+            Friends
+          </div>
+
+          {
+            myfriends?.map(friend => {
+              return (
+                <div
+                key={`${friend.uid} container`}
+                className="flex gap-3 items-center">
+                  <div className="flex gap-4 mt-3 items-center">
+              {/* Pfp Image */}
+              <img
+                src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTyyCG3jGw_PZPj17ttBPAPxdgPdpLO020L9g&s"
+                alt=""
+                className="w-15 h-15 rounded-full"
+              />
+              {/* Container storing Name, UID and Score */}
+              <div className="flex flex-col flex-1 gap-2">
+                <span className="font-bold">{friend.fullName}</span>
+                <span className="font-bold text-[#2A9D89] bg-[#D4EBE7] w-32 text-center rounded-full text-sm">
+                  TRUST: {friend.score}
+                </span>
+              </div>
+            </div>
+                </div>
+              )
+            })
+          }
         </div>
       </div>
     </>
