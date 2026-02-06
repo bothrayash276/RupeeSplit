@@ -197,7 +197,7 @@ const Friends = () => {
               {/* Container storing Name, UID and Score */}
               <div className="flex flex-col flex-1 gap-2">
                 <span className="font-bold text-xl">{friend.fullName}</span>
-                <span className="font-bold text-[#2A9D89] bg-[#D4EBE7] w-25 text-center rounded-full text-sm">
+                <span className="font-bold text-[#2A9D89] bg-[#D4EBE7] w-32 text-center rounded-full text-sm">
                   TRUST: {friend.score}
                 </span>
               </div>

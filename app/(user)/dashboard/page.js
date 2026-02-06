@@ -56,8 +56,16 @@ const Dashboard = () => {
               </span>
 
               <span
-              className={`${user.score >= 70} "" : "hidden" text-[#2C9986] font-bold px-2 bg-[#D4EBE7] rounded-xl text-sm` }>
+              className={`${user.score >= 70 ? "" : "hidden"} text-[#2C9986] font-bold px-2 bg-[#D4EBE7] rounded-xl text-sm` }>
                 EXCELLENT
+              </span>
+              <span
+              className={`${user.score < 70 && user.score >= 40 ? "" : "hidden"} text-[#a8b400] font-bold px-2 bg-[#fdfd9e] rounded-xl text-sm` }>
+                AVERAGE
+              </span>
+              <span
+              className={`${user.score < 40 ? "" : "hidden"} text-red-500 font-bold px-2 bg-[#ebd4d4] rounded-xl text-sm` }>
+                POOR
               </span>
               
             </div>
@@ -75,8 +83,8 @@ const Dashboard = () => {
 
               {/* If Score lies between 40 and 70 */}
               <span
-              className={`${user.score >= 40 && user.score < 70 ? "" : "hidden"} flex flex-col items-center justify-center h-40 w-40 rounded-full border-15 border-[#dfdfc6]`}>  
-                <p className="text-4xl font-bold text-[#cad800]">{user.score}</p>
+              className={`${user.score >= 40 && user.score < 70 ? "" : "hidden"} flex flex-col items-center justify-center h-40 w-40 rounded-full border-15 border-[#fdfd9e]`}>  
+                <p className="text-4xl font-bold text-[#dbea00]">{user.score}</p>
                 <p className="text-[#68827E] font-bold">out of 100</p>
               </span>
 

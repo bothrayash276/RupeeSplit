@@ -829,7 +829,7 @@ const GrpSetting = () => {
                                         {/* Trust Score */}
                                         <span
                                         key={`${user.uid} user score`}
-                                        className='font-bold text-[#2C9986] text-sm text-center bg-[#D4EBE7] w-25 rounded-full'>
+                                        className='font-bold text-[#2C9986] text-sm text-center bg-[#D4EBE7] w-32 rounded-full'>
                                             TRUST: {user.score}
                                         </span>
                                     </div>
@@ -1064,7 +1064,7 @@ const GrpSetting = () => {
                                         {/* Trust Score */}
                                         <span
                                         key={`${user.uid} user score`}
-                                        className='font-bold text-[#2C9986] text-sm text-center bg-[#D4EBE7] w-25 rounded-full'>
+                                        className='font-bold text-[#2C9986] text-sm text-center bg-[#D4EBE7] w-32 rounded-full'>
                                             TRUST: {user.score}
                                         </span>
                                     </div>
@@ -1173,7 +1173,7 @@ const GrpSetting = () => {
                                         {/* Trust Score */}
                                         <span
                                         key={`${user.uid} user score`}
-                                        className='font-bold text-[#2C9986] text-sm text-center bg-[#D4EBE7] w-25 rounded-full'>
+                                        className='font-bold text-[#2C9986] text-sm text-center bg-[#D4EBE7] w-32 rounded-full'>
                                             TRUST: {user.score}
                                         </span>
                                     </div>

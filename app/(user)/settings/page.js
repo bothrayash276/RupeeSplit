@@ -133,7 +133,7 @@ const Settings = () => {
                 <span className="font-bold text-gray-500 text-sm mb-2">
                   UID: {user.uid}
                 </span>
-                <span className="font-bold text-[#2A9D89] bg-[#D4EBE7] w-25 text-center rounded-full text-sm">
+                <span className="font-bold text-[#2A9D89] bg-[#D4EBE7] w-32 text-center rounded-full text-sm">
                   TRUST: {user.score}
                 </span>
               </div>
@@ -168,7 +168,7 @@ const Settings = () => {
           <img
             src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTyyCG3jGw_PZPj17ttBPAPxdgPdpLO020L9g&s"
             alt=""
-            className="w-25 rounded-full"
+            className="w-32 rounded-full"
           />
           {/* Score */}
           <span className="font-bold text-[#2A9D89] bg-[#D4EBE7] w-15 text-center rounded-full text-sm mt-3">
