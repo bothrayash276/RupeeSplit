@@ -959,6 +959,7 @@ const GrpSetting = () => {
     if(settleup) {
         return (
             <>
+            {/* Laptop UI */}
             <div 
             className="h-full w-full not-md:hidden flex flex-col p-2 items-center justify-center">
 
@@ -1056,6 +1057,110 @@ const GrpSetting = () => {
                         <button
                         onClick={settleExpense}
                         className='bg-[#2C9986] w-8/10 p-3 font-bold text-white rounded-2xl hover:bg-[#1e7f6f] cursor-pointer mt-5'>
+                            Settle Up
+                        </button>
+                    </div>
+
+                </div>
+
+            {/* Mobile UI */}
+            <div 
+            className="h-full w-full md:hidden flex flex-col p-2 items-center justify-center">
+
+                    {/* Top heading */}
+                    <div 
+                    className='flex border-b border-[#dddddd] p-5 bg-white rounded-2xl rounded-b-none w-full'>
+                        <div
+                        className='flex flex-col gap-3 flex-1'>
+                            <span
+                        className='text-3xl font-bold'>
+                            Settle the Dues
+                        </span>
+                        <span
+                        className='text-sm text-[#68827E]'>
+                            Clear the previous records of shared transaction and update your trust score
+                        </span>
+                        </div>
+                        <img
+                        onClick={() => {setSettleup(false)}} 
+                        src="/close.svg" alt=""  
+                        className='w-8 cursor-pointer'/>
+                    </div>
+
+                   
+
+                    {/* Middle Section */}
+                    <div
+                    className='bg-white w-full flex flex-col items-center'>
+
+                        {/* Text Total Amount */}
+                        <span
+                        className='text-sm text-[#68827E] mt-8 font-bold'>
+                            TOTAL AMOUNT
+                        </span>
+
+                        {/* Money */}
+                        <div
+                        className='flex items-center justify-center mt-5'>
+
+                            {/* Rupee Icon */}
+                            <img src="/rupee.svg" alt="" className='w-9'/>
+
+                            {/* Money Input */}
+                            <input 
+                            type="number"
+                            id="total repayed money"
+                            placeholder='0.00'
+                            min='0'
+                            className='text-5xl w-8/10 text-center font-bold placeholder:text-black foucs: outline-none' />
+                        </div>
+
+                        
+
+                    </div>
+
+                    {/* Repayment to Whom */}
+                    <div
+                    className='w-full bg-white flex flex-col items-center justify-center'>
+
+                        {/* Paid by Who Text */}
+                        <span
+                        className='text-sm w-9/10 mt-10'>
+                            Repaying to whom?
+                        </span>
+
+                        <button
+                        onBlur={()=>{setSettledrop(false)}}
+                        onClick={()=>{setSettledrop(!settledrop)}}
+                        className={`w-9/10 flex flex-col relative p-2 rounded-xl mt-2 ${settledrop ? "" : "text-xl font-bold underline underline-offset-6 decoration-[#2C9986]"} `}>
+                            <span className={`${settledrop ? "text-[#2C9886] font-bold" : ""}`}>{repaid}</span>
+
+                        {settledrop && <div
+                        className='flex flex-col absolute left-1/2 top-8.25 -translate-x-1/2 w-full bg-white border border-[#dddddd] p-2 rounded-xl mt-2'>
+                            {members.map( (user) => {
+                                if(user.uid === operator.uid) return
+                                return (
+                                    <span
+                                    key={user.uid}
+                                    onClick={()=>{handleSettledrop(user.fullName)}}
+                                    className='flex items-center justify-center gap-3'>
+                                        <img src="/person.svg" alt="" />
+                                        {user.fullName}
+                                    </span>
+                                )
+                            } )}
+                        </div>  }           
+                        
+                        </button>
+
+                    </div>
+
+                    {/* Save Section */}
+                    <div
+                    className='rounded-2xl rounded-t-none bg-white w-full flex items-center justify-center p-3'>
+                        <button
+                        onClick={settleExpense}
+                        className='bg-[#2C9986] w-full p-3 font-bold text-white rounded-2xl hover:bg-[#1e7f6f] cursor-pointer mt-5'>
                             Settle Up
                         </button>
                     </div>
@@ -1548,7 +1653,7 @@ const GrpSetting = () => {
             
             {/* Buttons */}
             <div
-            className='flex gap-3'>
+            className='flex gap-3 justify-between'>
                 {/* Add Expense Button */}
             <button
             onClick={() => setExpensePopUp(true)}
@@ -1596,7 +1701,7 @@ const GrpSetting = () => {
 
         {/* Transaction Tab */}
         <div 
-        className={`${transacTab ? "" : "hidden"} w-8/10`}>
+        className={`${transacTab ? "" : "hidden"} w-full`}>
 
             {/* Displaying Previous Transaction */}
             <div
