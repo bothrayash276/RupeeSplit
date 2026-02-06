@@ -188,6 +188,161 @@ const Dashboard = () => {
 
       </div>
 
+      {/* Mobile UI */}
+      <div
+      className="w-full h-full md:hidden flex flex-col gap-3 p-8">
+
+        {/* Account Insight */}
+        <div
+        className="w-full flex flex-col gap-5 items-center">
+
+          {/* Trust Score Display Container */}
+          <div
+          className="flex flex-col max-w-100 h-120 bg-while gap-10 items-center rounded-xl shadow-md p-7">
+
+            {/* Heading */}
+            <div
+            className="flex w-full items-center gap-3">
+              
+              {/* Text - Trust Score */}
+              <span
+              className="text-xl font-bold flex-1">
+                Trust Score
+              </span>
+
+              <span
+              className={`${user.score >= 70 ? "" : "hidden"} text-[#2C9986] font-bold px-2 bg-[#D4EBE7] rounded-xl text-sm` }>
+                EXCELLENT
+              </span>
+              <span
+              className={`${user.score < 70 && user.score >= 40 ? "" : "hidden"} text-[#a8b400] font-bold px-2 bg-[#fdfd9e] rounded-xl text-sm` }>
+                AVERAGE
+              </span>
+              <span
+              className={`${user.score < 40 ? "" : "hidden"} text-red-500 font-bold px-2 bg-[#ebd4d4] rounded-xl text-sm` }>
+                POOR
+              </span>
+              
+            </div>
+
+            {/* Color Coding Based on Score */}
+              <div
+              className="flex-1">
+                
+                {/* IF Score is greater than 70 */}
+                <span
+              className={`${user.score >= 70 ? "" : "hidden"} flex flex-col items-center justify-center h-40 w-40 rounded-full border-15 border-[#D4EBE7]`}>  
+                <p className="text-4xl font-bold text-[#2C9986]">{user.score}</p>
+                <p className="text-[#68827E] font-bold">out of 100</p>
+              </span>
+
+              {/* If Score lies between 40 and 70 */}
+              <span
+              className={`${user.score >= 40 && user.score < 70 ? "" : "hidden"} flex flex-col items-center justify-center h-40 w-40 rounded-full border-15 border-[#fdfd9e]`}>  
+                <p className="text-4xl font-bold text-[#dbea00]">{user.score}</p>
+                <p className="text-[#68827E] font-bold">out of 100</p>
+              </span>
+
+              {/* If score is less than 40 */}
+              <span
+              className={`${user.score < 40 ? "" : "hidden"} flex flex-col items-center justify-center h-40 w-40 rounded-full border-15 border-[#ebd4d4]`}>  
+                <p className="text-4xl font-bold text-red-500">{user.score}</p>
+                <p className="text-[#68827E] font-bold">out of 100</p>
+              </span>
+
+              </div>
+
+            {/* Text */}
+            <span
+            className="text-center w-7/10 h-3/10 text-[#68827E] text-sm">
+              Your score is based on the timely <span className="font-bold text-black">resettlements</span>. Rebalancing is done <span className="font-bold text-black">every week</span>
+            </span>
+
+          </div>
+
+        {/* Total Net Balance */}
+          <div 
+          className={`${(user.lend + user.owe) >=0 ? "bg-[#2C9986]" : "bg-red-500"} w-full flex flex-col justify-center items-center gap-3 rounded-xl shadow-md py-7 min-h-75`}>
+            
+            {/* Text - Total Net Balance */}
+            <span
+            className="text-neutral-100 text-sm">
+              TOTAL NET BALANCE
+            </span>
+
+            {/* Net Balance */}
+            <span
+            className="text-5xl font-bold text-white flex-1 flex items-center">
+             &#x20B9; {user.lend + user.owe}
+            </span>
+
+            {/* View Button */}
+            <Link
+            href={'/groups'}
+            className={`${user.lend + user.owe >=0 ? "text-[#2C9986]" : "text-red-500"} px-3 py-1 bg-white rounded-full w-30 font-bold text-center`}>
+              View
+            </Link>
+          </div>
+
+        {/* Account Balance */}
+          <div
+          className="flex flex-col gap-5 w-full">
+
+            {/* Lend */}
+            <div
+            className={`w-full shadow-md flex flex-col gap-3 bg-white py-7 rounded-xl flex-1 px-7`}>
+
+              {/* Image and You are Owed */}
+              <div
+              className="flex gap-3 items-center">
+                <img src="/increase.gif" alt="" className="w-10 rounded-full bg-[#D4EBE7] p-2" />
+                <span
+                className="text-[#68827E] font-bold">
+                  You are owed
+                </span>
+
+
+              </div>
+
+              {/* Amount */}
+              <span
+              className={`text-5xl font-bold ${user.lend ? "text-[#2C9986]" : "text-black"}`}>
+                <span className={`${user.lend ? "":"hidden"}`}>&#x2b;</span> &#x20B9; {user.lend}
+              </span>
+            </div>
+
+            {/* Owe */}
+            <div
+            className={`w-full shadow-md flex flex-col gap-3 bg-white py-7 rounded-xl flex-1 px-7`}>
+
+              {/* Image and You Owe */}
+              <div
+              className="flex gap-3 items-center">
+                <img src="/decrease.gif" alt="" className="w-10 rounded-full bg-[#ebd4d4] p-2" />
+                <span
+                className="text-[#68827E] font-bold">
+                  You owe
+                </span>
+
+
+              </div>
+
+              {/* Amount */}
+              <span
+              className={`text-5xl font-bold ${user.owe ? "text-red-500" : "text-black"}`}>
+                <span className={`${user.owe ? "":"hidden"}`}>&#x2212;</span> &#x20B9; {-user.owe}
+              </span>
+            </div>
+
+          </div>
+
+        </div>
+        
+
+        
+
+      </div>
+
     </>
   );
 };

@@ -295,12 +295,12 @@ const GrpSetting = () => {
         else if (group.dues[operator.fullName][repaid] >= 0) newScore = operator.score
         else {
             const gap = moment(obj.time, 'DD-MM-YY').diff(moment([...group.transactions].reverse()[0].time, 'DD-MM-YYYY'), 'days')
-            if(gap <= 2 ) newScore = operator.score + 0.1
-            else if(gap <= 4 && gap > 2 ) newScore = operator.score + 0.07
-            else if(gap <= 7 && gap > 4 ) newScore = operator.score + 0.05
-            else if(gap > 7 && gap <= 14) newScore = operator.score + (0.02 * (gap-7))
-            else if(gap > 14 && gap <= 21) newScore = operator.score + (0.15 * (gap-14))
-            else if(gap > 21) newScore = operator.score + (1.1 * (gap-21))
+            if(gap <= 2 ) newScore = operator.score + 0.05
+            else if(gap <= 4 && gap > 2 ) newScore = operator.score + 0.03
+            else if(gap <= 7 && gap > 4 ) newScore = operator.score + 0.01
+            else if(gap > 7 && gap <= 14) newScore = operator.score + (0.01 * (gap-7))
+            else if(gap > 14 && gap <= 21) newScore = operator.score + (0.08 * (gap-14))
+            else if(gap > 21) newScore = operator.score + (0.57 * (gap-21))
         }
         newScore = Number(newScore.toFixed(2))
         console.log(newScore)
