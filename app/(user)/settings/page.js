@@ -1,5 +1,6 @@
 "use client";
 import serverData_User from "@/app/_data";
+import PageLoading from "@/app/Loading";
 import { useSession } from "next-auth/react";
 import React from "react";
 import { useState, useEffect } from "react";
@@ -93,7 +94,7 @@ const Settings = () => {
 
   // Returns a loading page
   if (loading) {
-    return <>Please Wait</>;
+    return <><PageLoading/></>;
   }
   return (
     <>
@@ -132,8 +133,8 @@ const Settings = () => {
                 <span className="font-bold text-gray-500 text-sm mb-2">
                   UID: {user.uid}
                 </span>
-                <span className="font-bold text-[#2A9D89] bg-[#D4EBE7] w-15 text-center rounded-full text-sm">
-                  {user.score}
+                <span className="font-bold text-[#2A9D89] bg-[#D4EBE7] w-25 text-center rounded-full text-sm">
+                  TRUST: {user.score}
                 </span>
               </div>
             </div>

@@ -2,7 +2,7 @@
 import { redirect, RedirectType, useParams } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
 import { arrToStr, due, transactionObj, updateGroup } from '../_groupFxn'
-
+import moment from 'moment'
 import {v4 as uuidv4} from 'uuid'
 import { useSession } from 'next-auth/react'
 import PageLoading from '@/app/Loading'
@@ -56,6 +56,9 @@ const GrpSetting = () => {
     // Getting Group Id
     const params = useParams()
     const groupID = params.grpid
+
+
+
 
     
 
@@ -221,6 +224,7 @@ const GrpSetting = () => {
                 "title" : title,
                 "Paid by" : paid,
                 "Split between" : participants,
+                "time" : String(moment().format('DD-MM-YYYY')),
                 "amount" : totalMoney,
                 "division" : division
             }
@@ -260,6 +264,7 @@ const GrpSetting = () => {
             "title" : "Repayment",
             "Paid by" : operator.fullName,
             "Split between" : [repaid],
+            "time" : String(moment().format('DD-MM-YYYY')),
             "amount" : totalMoney,
             "division" : totalMoney
         }
@@ -275,12 +280,36 @@ const GrpSetting = () => {
         await updateGroup(newGrp)
         setGroup(newGrp)
 
+        // Score Calculation
+        let gap = moment(obj.time, 'DD-MM-YYYY').diff(moment(group.transactions.reverse()[0].time, 'DD-MM-YYYY'), 'days')
+        gap = Number(gap)
+        if(!gap) gap++
+        const high = 0.1; const mid = 0.07; const low = 0.05;
+
+        // Getting New Score
+        let newScore
+        if(group.dues[operator.fullName] === undefined) newScore = operator.score
+        else if (group.dues[operator.fullName][repaid] === undefined) newScore = operator.score
+        else if (group.dues[operator.fullName][repaid] >= 0) newScore = operator.score
+        else {
+            const gap = moment(obj.time, 'DD-MM-YY').diff(moment([...group.transactions].reverse()[0].time, 'DD-MM-YYYY'), 'days')
+            if(gap <= 2 ) newScore = operator.score + 0.05
+            else if(gap <= 4 && gap > 2 ) newScore = operator.score + 0.07
+            else if(gap <= 7 && gap > 4 ) newScore = operator.score + 0.1
+            else if(gap > 7 && gap <= 14) newScore = operator.score + (0.02 * (gap-7))
+            else if(gap > 14 && gap <= 21) newScore = operator.score + (0.15 * (gap-14))
+            else if(gap > 21) newScore = operator.score + (1.1 * (gap-21))
+        }
+        newScore = Number(newScore).toFixed(2)
+        console.log(newScore)
+
         // Updating user database
         if(-operator.owe >= totalMoney ){
             const money = Number(operator.owe) + Number(totalMoney)
             const {_id, ...vari} = operator
             const newUser = {
                 ...vari,
+                "score" : newScore,
                 "owe" : Number(money)
             }
             setOperator(newUser)
@@ -299,6 +328,7 @@ const GrpSetting = () => {
             const {_id, ...vari} = operator
             const newUser = {
                 ...vari,
+                "score" : newScore,
                 "owe" : Number(operator.owe) - Number(excess),
                 "lend" : Number(operator.lend) + Number(money)
             }
@@ -335,30 +365,34 @@ const GrpSetting = () => {
     const invite = async (uid) => {
 
         // Get the friend
-        const [d1] = displayInvite.filter((person)=>uid===person.uid)
-
-        const newFriendData = {
-            ...d1,
-            "groups" : setArray([...d1.groups, group.id])
+        try {
+            const [d1] = displayInvite.filter((person)=>uid===person.uid)
+    
+            const newFriendData = {
+                ...d1,
+                "groups" : setArray([...d1.groups, group.id])
+            }
+            
+            // Get New Group
+            const newGroupData = {
+                ...group,
+                "members" : setArray([...group.members, uid])
+            }
+            setGroup(newGroupData)
+    
+            console.log(newGroupData)
+    
+            const url = `${process.env.NEXT_PUBLIC_MONGO_URI}/grpInvite`
+            await fetch(url, {
+                method : 'POST',
+                headers : {
+                    'Content-Type' : 'application/json'
+                },
+                body : JSON.stringify([newFriendData, newGroupData])
+            })
+        } finally {
+            setInviteFriend(false)
         }
-        
-        // Get New Group
-        const newGroupData = {
-            ...group,
-            "members" : setArray([...group.members, uid])
-        }
-        setGroup(newGroupData)
-
-        console.log(newGroupData)
-
-        const url = `${process.env.NEXT_PUBLIC_MONGO_URI}/grpInvite`
-        await fetch(url, {
-            method : 'POST',
-            headers : {
-                'Content-Type' : 'application/json'
-            },
-            body : JSON.stringify([newFriendData, newGroupData])
-        })
 
     }
 
@@ -716,7 +750,7 @@ const GrpSetting = () => {
                         onBlur={()=>{setSettledrop(false)}}
                         onClick={()=>{setSettledrop(!settledrop)}}
                         className={`w-7/10 flex flex-col relative p-2 rounded-xl mt-2 ${settledrop ? "" : "text-xl font-bold underline underline-offset-6 decoration-[#2C9986]"} `}>
-                            <span className={`${settledrop ? "text-[#2C9886] font-bold" : ""}`}>{paid}</span>
+                            <span className={`${settledrop ? "text-[#2C9886] font-bold" : ""}`}>{repaid}</span>
 
                         {settledrop && <div
                         className='flex flex-col absolute left-1/2 top-8.25 -translate-x-1/2 w-full bg-white border border-[#dddddd] p-2 rounded-xl mt-2'>
@@ -918,10 +952,9 @@ const GrpSetting = () => {
                         Recent Activity
                     </span>
                 </div>
-
                 {/* Function to Show all the transactions */}
                 {
-                    group.transactions.map( pay => {
+                    [...group.transactions].reverse().map( pay => {
                         return (
                             <div
                             key={`${group.id} ${pay.id} 1`}
@@ -936,10 +969,18 @@ const GrpSetting = () => {
                                     className='font-bold text-xl'>
                                         {pay.title}
                                     </span>
+
                                     <span
                                     key={`${group.id} ${pay.id} 4`}
                                     className='text-[#68827E] text-sm font-bold'>
                                         {pay["Paid by"]} paid &#x20B9; {pay.amount} for {arrToStr(pay["Split between"])} 
+                                    </span>
+
+                                    {/* Date */}
+                                    <span
+                                    key={`${group.id} ${pay.id} date`}
+                                    className='text-sm font-bold text-[#68827E]'>
+                                        DATE : {pay.time}
                                     </span>
                                 </div>
                                 
@@ -1020,7 +1061,7 @@ const GrpSetting = () => {
                                     </div>
 
                                 </div>
-                                {group.dues[user.fullName]===!undefined ? Object.entries(group.dues[user.fullName]).map(([name, amount]) => {
+                                {group.dues[user.fullName] !== undefined ? Object.entries(group.dues[user.fullName]).map(([name, amount]) => {
                                     if(!name || amount === 0) return
                                     return (
                                         <div

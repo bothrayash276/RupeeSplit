@@ -38,7 +38,7 @@ const Groups = () => {
           
           // Getting Groups Data
           const data2 = await Promise.all(
-            data.groups.map( (id) => {
+            data.groups?.map( (id) => {
               const url = `${process.env.NEXT_PUBLIC_MONGO_URI}/findgrp/${id}`
               const res = fetch(url).then( res => res.json())
               return res

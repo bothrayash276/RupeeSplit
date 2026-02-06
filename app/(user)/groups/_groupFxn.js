@@ -62,7 +62,7 @@ export function due (username, dues) {
 export function arrToStr (arr) {
     let s = ``;
     for( let i = 0; i < arr.length; i++ ){
-        s += `${arr[i]} `
+        s += `${arr[i]}, `
     }
     return s;
 }
