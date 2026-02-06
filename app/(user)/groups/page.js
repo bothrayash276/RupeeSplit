@@ -280,6 +280,130 @@ const Groups = () => {
       </div>
       
     </div>
+
+    {/* Mobile UI */}
+    <div 
+    className={`md:hidden h-full w-full my-10`}>
+
+      {/* Container for Heading, Description and Create Group Button */}
+      <div 
+      className="w-full flex px-10">
+
+        {/* Heading and Description */}
+        <div
+        className='flex flex-col flex-1 gap-2'>
+
+          {/* Heading */}
+          <span
+          className='text-3xl font-bold'>
+            Groups
+          </span>
+          <span
+          className='text-gray-400 font-bold' >
+          Manage your shared expenses and keep a track on it.
+          </span>
+
+        </div>
+
+        {/* Create Group Button */}
+        <button
+        onClick={() => {setGroupPopup(true)}}
+        className='flex items-center justify-center gap-3 bg-[#2C9986] px-3 rounded-full h-12 text-white shadow-lg fixed bottom-1 w-8/10'>
+          <img src="/add.svg" alt="" className='w-6' />
+          Create New Group
+        </button>
+
+      </div>
+
+      {/* Group Cards Container */}
+      <div className="flex flex-col items-center gap-10 w-full h-full mt-1 py-3 px-10">
+        {
+          group.map ((mygrp) => {
+            if(!mygrp) return
+            return (             
+              <Link
+              href={`/groups/${mygrp.id}`}
+              target='_blank'
+              key={`${mygrp.id} main container`}
+              className='bg-white flex flex-col p-5 h-130 w-80 shadow rounded-2xl'>
+
+                {/* Group Icon Container */}
+                <div
+                key={`${mygrp.id} group icon container`}
+                className='bg-[#D4EBE7] w-full h-70 flex item-center justify-center rounded-2xl mb-5'>
+                  {/* Group Icon */}
+                  <img 
+                  key={`${mygrp.id} group icon`}
+                  src="/mygroup.svg" 
+                  className='w-15' />
+                </div>                
+
+                {/* Group Name */}
+                <span
+                key={`${mygrp.id} group name`}
+                className='text-xl font-bold mb-2'>
+                  {mygrp.groupName}
+                </span>
+
+                {/* Members Container */}
+                <div
+                key={`${mygrp.id} members container`}
+                className='flex'>
+                {/* Members Icon */}
+                  <img
+                  key={`${mygrp.id} members icon `} 
+                  src="/members.svg" 
+                  className='w-5' />
+
+                  {/* Members */}
+                  <span 
+                  key={`${mygrp.id} group members`}
+                  className='text-[#68827E] px-2'>
+                    {mygrp.members.length} members
+                  </span>
+                </div>
+
+                
+
+                {/* Divider */}
+                <div 
+                key={`${mygrp.id} divider`}
+                className='border border-[#eaeaea] mt-6 mb-4'></div>
+
+                {/* Balance Text */}
+                <span
+                key={`${mygrp.id} text saying balance`}
+                className='text-[#68827E] text-sm font-bold'>
+                  YOUR BALANCE
+                </span>
+
+                {/* Showcasing Balance */}
+                {due(user.fullName, mygrp.dues) < 0 ? <span
+                key={`${mygrp.id} your balance`}
+                className='text-red-500 font-bold text-xl mt-2'>
+                  You owe &#x20B9; {-due(user.fullName, mygrp.dues)}
+                </span> : ""}
+
+                {due(user.fullName, mygrp.dues) > 0 ? <span
+                key={`${mygrp.id} your balance`}
+                className='text-[#2C9986] font-bold text-xl mt-2'>
+                  You are owed &#x20B9; {due(user.fullName, mygrp.dues)}
+                </span> : ""}
+
+                {due(user.fullName, mygrp.dues) === 0 ? <span
+                key={`${mygrp.id} your balance`}
+                className='text-[#68827E] font-bold text-xl mt-2 italic'>
+                  Settled Up
+                </span> : ""}
+
+              </Link>
+            )
+            
+          })
+        }
+      </div>
+      
+    </div>
       
     </>
   )
