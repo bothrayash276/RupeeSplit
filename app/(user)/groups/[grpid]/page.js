@@ -269,12 +269,25 @@ const GrpSetting = () => {
 
             // Separates out the users with checked box
             await members.map ( (user) => {
-                if(document.getElementById(`${user.uid} checkbox ratio`).value || (document.getElementById(`${user.uid} checkbox ratio mobile`).value && innerWidth <= 767) ) {
+                if(document.getElementById(`${user.uid} checkbox ratio`).value || document.getElementById(`${user.uid} checkbox ratio mobile`).value) {
                     participants.push(user.fullName)
-                    const ratio_value = {
+                    let ratio_value
+                    if(innerWidth >= 768){
+                        ratio_value = {
                         "name" : user.fullName,
-                        "share" : document.getElementById(`${user.uid} checkbox ratio`).value || (document.getElementById(`${user.uid} checkbox ratio mobile`).value && innerWidth <= 767)
+                        "share" : document.getElementById(`${user.uid} checkbox ratio`).value
+                        }
                     }
+                    else {
+                        ratio_value = {
+                        "name" : user.fullName,
+                        "share" : document.getElementById(`${user.uid} checkbox ratio mobile`).value
+                        }
+                    }
+                    console.log(ratio_value)
+
+
+
                     ratioParticipants.push(ratio_value)
                 }
                 
@@ -328,12 +341,23 @@ const GrpSetting = () => {
             await members.map ( (user) => {
                 if(document.getElementById(`${user.uid} checkbox exact`).value || (document.getElementById(`${user.uid} checkbox exact mobile`).value && innerWidth <= 767)) {
                     participants.push(user.fullName)
-                    const ratio_value = {
+                    let ratio_value 
+                    if(innerWidth >= 768) {
+                        ratio_value = {
                         "name" : user.fullName,
-                        "share" : document.getElementById(`${user.uid} checkbox exact`).value || (document.getElementById(`${user.uid} checkbox exact mobile`).value && innerWidth <= 767)
+                        "share" : document.getElementById(`${user.uid} checkbox exact`).value
+                        }
                     }
+                    else {
+                        ratio_value = {
+                        "name" : user.fullName,
+                        "share" : document.getElementById(`${user.uid} checkbox exact mobile`).value
+                        }
+                    }
+                    
                     ratioParticipants.push(ratio_value)
                 }
+           
                 
             })
             // division of money
