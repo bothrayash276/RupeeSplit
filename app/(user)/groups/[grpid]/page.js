@@ -233,7 +233,65 @@ const GrpSetting = () => {
                 "Split between" : participants,
                 "time" : String(moment().format('DD-MM-YYYY')),
                 "amount" : totalMoney,
-                "division" : division
+                "division" : division,
+                "type" : "equally"
+            }
+            
+            // const transaction
+            const transac = await transactionObj([...group.transactions, obj])
+            const newGrp = {
+                ...group,
+                'transactions' : [...group.transactions, obj],
+                'dues' : transac
+            }
+            await updateGroup(newGrp)
+            setGroup(newGrp)
+
+            // Updating user database
+            const pro = members.map((user) => {
+                return lendOwe(user, group, newGrp, operator.score)
+            })
+            await Promise.all(pro)
+            
+        }
+        else if(ratio) {
+
+            // Title 
+            const title = document.getElementById('title').value || "Payment"
+
+            // Total Money
+            const totalMoney = document.getElementById('total money').value
+
+            // Stores total Participants
+            const participants = []
+
+            const ratioParticipants = []
+
+            // Separates out the users with checked box
+            await members.map ( (user) => {
+                if(document.getElementById(`${user.uid} checkbox ratio`).value) {
+                    participants.push(user.fullName)
+                    const ratio_value = {
+                        "name" : user.fullName,
+                        "share" : document.getElementById(`${user.uid} checkbox ratio`).value
+                    }
+                    ratioParticipants.push(ratio_value)
+                }
+                
+            })
+            // division of money
+
+            // Transaction history
+            const obj = {
+                "id" : uuidv4(),
+                "title" : title,
+                "Paid by" : paid,
+                "Split between" : participants,
+                "ratioDivision" : ratioParticipants,
+                "time" : String(moment().format('DD-MM-YYYY')),
+                "amount" : totalMoney,
+                "division" : totalMoney,
+                "type" : "ratio"
             }
             
             // const transaction
@@ -653,7 +711,6 @@ const GrpSetting = () => {
                                         className='full font-bold flex-1'>
                                             {user.fullName}
                                         </span>
-
                                         {/* Number Input */}
                                         <input 
                                         key={`${user.uid} checkbox`}

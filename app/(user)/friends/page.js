@@ -87,11 +87,12 @@ const Friends = () => {
       }
     }
     load()
-  }, [status])
+  }, [status, myinfo])
 
 
   const addFriend = async () => {
     alert('Friend Added Successfully!')
+    setFetched(false)
     const myUserFriends = [...myinfo.friends, friendInfo.uid];
     const myFriendFriends = [...friendInfo.friends, myinfo.uid];
     const myUser = {
