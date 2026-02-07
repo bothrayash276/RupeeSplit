@@ -175,8 +175,8 @@ const Settings = () => {
             className="w-32 rounded-full"
           />
           {/* Score */}
-          <span className="font-bold text-[#2A9D89] bg-[#D4EBE7] w-15 text-center rounded-full text-sm mt-3">
-            {user.score}
+          <span className="font-bold text-[#2A9D89] bg-[#D4EBE7] w-32 text-center rounded-full text-sm mt-3">
+            TRUST   : {user.score}
           </span>
 
           {/* Full Name */}

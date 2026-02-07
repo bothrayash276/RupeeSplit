@@ -527,9 +527,8 @@ const GrpSetting = () => {
             }
             setGroup(newGroupData)
     
-            console.log(newGroupData)
-    
             const url = `${process.env.NEXT_PUBLIC_MONGO_URI}/grpInvite`
+            setInviteFriend(false)
             await fetch(url, {
                 method : 'POST',
                 headers : {
@@ -538,7 +537,7 @@ const GrpSetting = () => {
                 body : JSON.stringify([newFriendData, newGroupData])
             })
         } finally {
-            setInviteFriend(false)
+            alert("Friend Invited")
         }
 
     }
@@ -1822,7 +1821,7 @@ const GrpSetting = () => {
                 className='flex gap-2 text-[#68827E]'>
 
                     <div
-                    className='flex gap-2 w-full'>
+                    className='flex gap-2'>
                         {/* Image */}
                     <img src="/pie.gif" alt="" className='w-6 h-6' />
 
