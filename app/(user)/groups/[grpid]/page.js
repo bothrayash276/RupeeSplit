@@ -206,17 +206,17 @@ const GrpSetting = () => {
         if(equally) {
 
             // Title 
-            const title = document.getElementById('title').value || "Payment"
+            const title = document.getElementById('title').value || document.getElementById('title mobile').value || "Payment"
 
             // Total Money
-            const totalMoney = document.getElementById('total money').value
+            const totalMoney = document.getElementById('total money').value || document.getElementById('total money mobile').value
 
             // Stores total Participants
             const participants = []
     
             // Separates out the users with checked box
             members.map ( (user) => {
-                if(document.getElementById(`${user.uid} checkbox equally`).checked) {
+                if(document.getElementById(`${user.uid} checkbox equally`).checked || document.getElementById(`${user.uid} checkbox equally mobile`).checked) {
                     participants.push(user.fullName)
                 }
                 
@@ -257,10 +257,10 @@ const GrpSetting = () => {
         else if(ratio) {
 
             // Title 
-            const title = document.getElementById('title').value || "Payment"
+            const title = document.getElementById('title').value || document.getElementById('title mobile').value || "Payment"
 
             // Total Money
-            const totalMoney = document.getElementById('total money').value
+            const totalMoney = document.getElementById('total money').value || document.getElementById('total money mobile').value
 
             // Stores total Participants
             const participants = []
@@ -269,11 +269,68 @@ const GrpSetting = () => {
 
             // Separates out the users with checked box
             await members.map ( (user) => {
-                if(document.getElementById(`${user.uid} checkbox ratio`).value) {
+                if(document.getElementById(`${user.uid} checkbox ratio`).value || (document.getElementById(`${user.uid} checkbox ratio mobile`).value && innerWidth <= 767) ) {
                     participants.push(user.fullName)
                     const ratio_value = {
                         "name" : user.fullName,
-                        "share" : document.getElementById(`${user.uid} checkbox ratio`).value
+                        "share" : document.getElementById(`${user.uid} checkbox ratio`).value || (document.getElementById(`${user.uid} checkbox ratio mobile`).value && innerWidth <= 767)
+                    }
+                    ratioParticipants.push(ratio_value)
+                }
+                
+            })
+            // division of money
+
+            // Transaction history
+            const obj = {
+                "id" : uuidv4(),
+                "title" : title,
+                "Paid by" : paid,
+                "Split between" : participants,
+                "ratioDivision" : ratioParticipants,
+                "time" : String(moment().format('DD-MM-YYYY')),
+                "amount" : totalMoney,
+                "division" : totalMoney,
+                "type" : "ratio"
+            }
+            
+            // const transaction
+            const transac = await transactionObj([...group.transactions, obj])
+            const newGrp = {
+                ...group,
+                'transactions' : [...group.transactions, obj],
+                'dues' : transac
+            }
+            await updateGroup(newGrp)
+            setGroup(newGrp)
+
+            // Updating user database
+            const pro = members.map((user) => {
+                return lendOwe(user, group, newGrp, operator.score)
+            })
+            await Promise.all(pro)
+            
+        }
+        else if(exact) {
+
+            // Title 
+            const title = document.getElementById('title').value || document.getElementById('title mobile').value || "Payment"
+
+            // Total Money
+            const totalMoney = document.getElementById('total money').value || document.getElementById('total money mobile').value
+
+            // Stores total Participants
+            const participants = []
+
+            const ratioParticipants = []
+
+            // Separates out the users with checked box
+            await members.map ( (user) => {
+                if(document.getElementById(`${user.uid} checkbox exact`).value || (document.getElementById(`${user.uid} checkbox exact mobile`).value && innerWidth <= 767)) {
+                    participants.push(user.fullName)
+                    const ratio_value = {
+                        "name" : user.fullName,
+                        "share" : document.getElementById(`${user.uid} checkbox exact`).value || (document.getElementById(`${user.uid} checkbox exact mobile`).value && innerWidth <= 767)
                     }
                     ratioParticipants.push(ratio_value)
                 }
@@ -321,7 +378,7 @@ const GrpSetting = () => {
     const settleExpense = async () => {
 
         // Total Money
-        const totalMoney = document.getElementById('total repayed money').value
+        const totalMoney = document.getElementById('total repayed money').value || document.getElementById('total repayed money mobile').value
 
         // Transaction history
         const obj = {
@@ -785,7 +842,7 @@ const GrpSetting = () => {
                             {/* Money Input */}
                             <input 
                             type="number"
-                            id="total money"
+                            id="total money mobile"
                             placeholder='0.00'
                             min='0'
                             className='text-5xl w-8/10 text-center font-bold placeholder:text-black foucs: outline-none' />
@@ -799,7 +856,7 @@ const GrpSetting = () => {
 
                         {/* Title Input */}
                         <input
-                        id='title' 
+                        id='title mobile' 
                         type="text"
                         placeholder='eg. Dinner at Burger King'
                         className='w-9/10 py-2 px-4 rounded-xl focus:outline-none border border-[#dddddd] focus:border-[#9b9b9b] my-2' />
@@ -887,7 +944,7 @@ const GrpSetting = () => {
                             { members.map ( (user) => {
                                 return (
                                     <div
-                                    onClick={() => {document.getElementById(`${user.uid} checkbox equally`).checked = !document.getElementById(`${user.uid} checkbox equally`).checked}}
+                                    onClick={() => {document.getElementById(`${user.uid} checkbox equally mobile`).checked = !document.getElementById(`${user.uid} checkbox equally mobile`).checked}}
                                     key={`${user.uid} container equally`}
                                     className='bg-white w-full p-3 border border-[#dddddd] flex gap-5 rounded-xl'>
 
@@ -907,7 +964,7 @@ const GrpSetting = () => {
                                         {/* Checkbox */}
                                         <input 
                                         key={`${user.uid} checkbox equally`}
-                                        id={`${user.uid} checkbox equally`}
+                                        id={`${user.uid} checkbox equally mobile`}
                                         type="checkbox" 
                                         className='w-4 accent-[#2C9986] rounded-full'/>
                                     </div>
@@ -945,7 +1002,7 @@ const GrpSetting = () => {
                                         {/* Number Input */}
                                         <input 
                                         key={`${user.uid} checkbox`}
-                                        id={`${user.uid} checkbox exact`}
+                                        id={`${user.uid} checkbox exact mobile`}
                                         type="number" 
                                         defaultValue='0'
                                         placeholder='0.00'
@@ -983,7 +1040,7 @@ const GrpSetting = () => {
                                         {/* Number Input */}
                                         <input 
                                         key={`${user.uid} checkbox`}
-                                        id={`${user.uid} checkbox ratio`}
+                                        id={`${user.uid} checkbox ratio mobile`}
                                         type="number" 
                                         defaultValue='1'
                                         placeholder='1'
@@ -1166,7 +1223,7 @@ const GrpSetting = () => {
                             {/* Money Input */}
                             <input 
                             type="number"
-                            id="total repayed money"
+                            id="total repayed money mobile"
                             placeholder='0.00'
                             min='0'
                             className='text-5xl w-8/10 text-center font-bold placeholder:text-black foucs: outline-none' />
