@@ -38,6 +38,7 @@ const GrpSetting = () => {
     const [drop, setDrop] = useState(false)
     const [settledrop, setSettledrop] = useState(false)
     const [paid, setPaid] = useState("Select a Person")
+    const [selectError, setSelectError] = useState(false)
     const [repaid, setRepaid] = useState("Select a Person")
     const handleDrop = (name) => {
         setPaid(name)
@@ -202,6 +203,14 @@ const GrpSetting = () => {
 
     // Function Adding Expenses
     const addExpense = async () => {
+
+        if(paid === "Select a Person") {
+            setSelectError(true)
+            setTimeout(() => {
+                setSelectError(false)
+            }, 3000);
+            return
+        }
 
         if(equally) {
 
@@ -400,6 +409,14 @@ const GrpSetting = () => {
 
     // Function Adding Expenses
     const settleExpense = async () => {
+
+        if(repaid === "Select a Person") {
+            setSelectError(true)
+            setTimeout(() => {
+                setSelectError(false)
+            }, 3000);
+            return
+        }
 
         // Total Money
         const totalMoney = document.getElementById('total repayed money').value || document.getElementById('total repayed money mobile').value
@@ -632,7 +649,7 @@ const GrpSetting = () => {
                         <button
                         onBlur={()=>{setDrop(false)}}
                         onClick={()=>{setDrop(!drop)}}
-                        className={`w-7/10 flex flex-col relative p-2 rounded-xl mt-2 ${drop ? "" : "text-xl font-bold underline underline-offset-6 decoration-[#2C9986]"} `}>
+                        className={`w-7/10 flex flex-col relative p-2 rounded-xl mt-2 ${drop ? "" : "text-xl font-bold underline underline-offset-6"} ${selectError ? "decoration-red-500" : "decoration-[#2C9986]"} `}>
                             <span className={`${drop ? "text-[#2C9886] font-bold" : ""}`}>{paid}</span>
 
                         {drop && <div
@@ -900,7 +917,7 @@ const GrpSetting = () => {
                         <button
                         onBlur={()=>{setDrop(false)}}
                         onClick={()=>{setDrop(!drop)}}
-                        className={`w-9/10 flex flex-col relative p-2 rounded-xl mt-2 ${drop ? "" : "text-xl font-bold underline underline-offset-6 decoration-[#2C9986]"} `}>
+                        className={`w-9/10 flex flex-col relative p-2 rounded-xl mt-2 ${drop ? "" : "text-xl font-bold underline underline-offset-6 "} ${selectError ? "decoration-red-500" : "decoration-[#2C9986]"} `}>
                             <span className={`${drop ? "text-[#2C9886] font-bold" : ""}`}>{paid}</span>
 
                         {drop && <div
@@ -1165,7 +1182,7 @@ const GrpSetting = () => {
                         <button
                         onBlur={()=>{setSettledrop(false)}}
                         onClick={()=>{setSettledrop(!settledrop)}}
-                        className={`w-7/10 flex flex-col relative p-2 rounded-xl mt-2 ${settledrop ? "" : "text-xl font-bold underline underline-offset-6 decoration-[#2C9986]"} `}>
+                        className={`w-7/10 flex flex-col relative p-2 rounded-xl mt-2 ${settledrop ? "" : "text-xl font-bold underline underline-offset-6"} ${selectError ? "decoration-red-500" : "decoration-[#2C9986]"} `}>
                             <span className={`${settledrop ? "text-[#2C9886] font-bold" : ""}`}>{repaid}</span>
 
                         {settledrop && <div
@@ -1269,7 +1286,7 @@ const GrpSetting = () => {
                         <button
                         onBlur={()=>{setSettledrop(false)}}
                         onClick={()=>{setSettledrop(!settledrop)}}
-                        className={`w-9/10 flex flex-col relative p-2 rounded-xl mt-2 ${settledrop ? "" : "text-xl font-bold underline underline-offset-6 decoration-[#2C9986]"} `}>
+                        className={`w-9/10 flex flex-col relative p-2 rounded-xl mt-2 ${settledrop ? "" : "text-xl font-bold underline underline-offset-6"} ${selectError ? "decoration-red-500" : "decoration-[#2C9986]"} `}>
                             <span className={`${settledrop ? "text-[#2C9886] font-bold" : ""}`}>{repaid}</span>
 
                         {settledrop && <div
